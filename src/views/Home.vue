@@ -1,16 +1,16 @@
 <template>
-  <hello-world />
+  <time-table-admin />
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import HelloWorld from '../components/HelloWorld.vue'
+import TimeTableAdmin from '../components/TimeTableAdmin.vue'
 
 export default Vue.extend({
   name: 'Home',
 
   components: {
-    HelloWorld
+    TimeTableAdmin
   }
 })
 </script>
