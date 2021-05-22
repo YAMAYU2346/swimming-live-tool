@@ -4,6 +4,8 @@
       label="File input"
       outlined
       dense
+      hide-details
+      accept=".xlsx"
       @change="uploadExcelFile"
     ></v-file-input>
   </v-container>
@@ -45,24 +47,30 @@ export default Vue.extend({
       const range = Number(sheets['Table 1']['!ref']?.slice(-2))
       const data = sheets['Table 1']
       const events = []
+      let firstEventNo = 0
+      let lastEventNo = 0
       for (let index = 1; index < range; index++) {
-        if (data[`A${index}`].t !== 'n') {
+        if (!data[`A${index}`] || data[`A${index}`].t !== 'n') {
           continue
+        }
+        if (firstEventNo === 0) {
+          firstEventNo = data[`A${index}`].v
         }
         const event = {
           no: data[`A${index}`].v,
           type: this.replaceText(data[`B${index}`].v),
           event: this.replaceText(data[`C${index}`].v),
-          length: data[`E${index}`].v,
+          length: data[`E${index}`] ? data[`E${index}`].v : this.replaceText(data[`D${index}`].v),
           category: this.replaceText(data[`F${index}`].v),
           class: this.replaceText(data[`G${index}`].v),
           groups: data[`H${index}`].v,
           date: data[`I${index}`].w,
           time: data[`J${index}`].w
         }
+        lastEventNo = data[`A${index}`].v
         events.push(event)
       }
-      this.$emit('upload', JSON.stringify(events))
+      this.$emit('upload', JSON.stringify(events), firstEventNo, lastEventNo)
     }
 
   },

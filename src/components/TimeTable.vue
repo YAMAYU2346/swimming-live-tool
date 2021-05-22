@@ -7,7 +7,12 @@
       :single-select="true"
       item-key="no"
       show-select
+      hide-default-footer
+      :items-per-page="1000"
+      dense
+      fixed-header
       class="elevation-1"
+      :height="height"
     >
     </v-data-table>
   </v-container>
@@ -29,6 +34,9 @@ type event = {
 }
 
 type DataType= {
+  event:string
+  eventNo:number
+  height:number
   selected:event[]
   headers:{[key:string]:string|boolean}[]
 }
@@ -39,10 +47,21 @@ export default Vue.extend({
     events: {
       type: String,
       default: ''
+    },
+    firstEventNo: {
+      type: Number,
+      default: 1
+    },
+    isNextEvent: {
+      type: Boolean,
+      default: true
     }
   },
   data () :DataType {
     return {
+      event: 'Not Selected',
+      eventNo: 0,
+      height: window.innerHeight - 260,
       selected: [],
       headers: [
         {
@@ -62,19 +81,48 @@ export default Vue.extend({
       ]
     }
   },
-  computed: {
-    event ():string {
-      if (this.selected.length > 0) {
-        const selectedEvent:event = this.selected[0]
-        return `No.${selectedEvent.no} ${selectedEvent.class}${selectedEvent.type} 
-        ${selectedEvent.length}${selectedEvent.event}`
+  methods: {
+    updateEvent (selected:event[]):void {
+      if (selected.length > 0) {
+        this.eventNo = selected[0].no
+        this.event = JSON.stringify(selected[0])
       } else {
-        return 'Not Selected'
+        this.event = 'Not Selected'
       }
+      this.$emit('updateEvent', this.event)
     },
+    nextEvent ():void{
+      console.log('next')
+      const eventIndex = this.eventList.findIndex((event) => {
+        return event.no === this.eventNo
+      })
+      this.selected = [this.eventList[eventIndex + 1]]
+    },
+    prevEvent ():void{
+      const eventIndex = this.eventList.findIndex((event) => {
+        return event.no === this.eventNo
+      })
+      this.selected = [this.eventList[eventIndex - 1]]
+    },
+    handleResize: function () {
+      this.height = window.innerHeight - 260
+    }
+  },
+  mounted: function () {
+    window.addEventListener('resize', this.handleResize)
+  },
+  beforeDestroy: function () {
+    window.removeEventListener('resize', this.handleResize)
+  },
+  computed: {
     eventList ():event[] {
       if (this.events !== '') { return JSON.parse(this.events) }
       return []
+    }
+  },
+  watch: {
+    selected (selected:event[]):void {
+      this.updateEvent(selected)
     }
   }
 })
