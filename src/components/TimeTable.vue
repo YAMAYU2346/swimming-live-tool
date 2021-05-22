@@ -1,12 +1,11 @@
 <template>
   <v-container>
-    <div>{{ event }}</div>
     <v-data-table
       v-model="selected"
       :headers="headers"
-      :items="races"
+      :items="eventList"
       :single-select="true"
-      item-key="name"
+      item-key="no"
       show-select
       class="elevation-1"
     >
@@ -17,7 +16,7 @@
 <script lang="ts">
 import Vue from 'vue'
 
-type race = {
+type event = {
   no: number
   type: string
   event: string
@@ -29,11 +28,21 @@ type race = {
   time: string
 }
 
+type DataType= {
+  selected:event[]
+  headers:{[key:string]:string|boolean}[]
+}
+
 export default Vue.extend({
   name: 'TimeTable',
-
-  data: () => (
-    {
+  props: {
+    events: {
+      type: String,
+      default: ''
+    }
+  },
+  data () :DataType {
+    return {
       selected: [],
       headers: [
         {
@@ -50,31 +59,22 @@ export default Vue.extend({
         { text: '組', sortable: false, value: 'groups' },
         { text: '日付', sortable: false, value: 'date' },
         { text: '時間', sortable: false, value: 'time' }
-      ],
-      races: [
-        {
-          no: 1,
-          type: '女子',
-          event: '背泳ぎ',
-          length: '100m',
-          category: '予選',
-          class: '無差別',
-          groups: 3,
-          date: '2021/05/28',
-          time: '10:00'
-        }
       ]
     }
-  ),
+  },
   computed: {
-    event () {
+    event ():string {
       if (this.selected.length > 0) {
-        const selectedEvent:race = this.selected[0]
+        const selectedEvent:event = this.selected[0]
         return `No.${selectedEvent.no} ${selectedEvent.class}${selectedEvent.type} 
         ${selectedEvent.length}${selectedEvent.event}`
       } else {
         return 'Not Selected'
       }
+    },
+    eventList ():event[] {
+      if (this.events !== '') { return JSON.parse(this.events) }
+      return []
     }
   }
 })

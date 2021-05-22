@@ -14,7 +14,7 @@ import Vue from 'vue'
 import XLSX from 'xlsx'
 
 type DataType = {
-  workbook: string|ArrayBuffer
+  sheets: string|ArrayBuffer
 }
 
 export default Vue.extend({
@@ -22,22 +22,52 @@ export default Vue.extend({
 
   data () :DataType {
     return {
-      workbook: ''
+      sheets: ''
     }
   },
   methods: {
-    uploadExcelFile: (file:File) => {
+    uploadExcelFile (file:File):void {
       if (file) {
         const fileReader = new FileReader()
-        fileReader.onload = function (event:Event) {
+        fileReader.onload = () => {
         // 読み込んだエクセルファイル(ArrayBuffer)をUint8Array配列にし、XLSX.readに渡します。
           const data = new Uint8Array(fileReader.result as ArrayBuffer)
           const workbook = XLSX.read(data, { type: 'array' })
-          console.log(workbook.Sheets['Table 1']['!ref'])
+          this.excelToJson(workbook.Sheets)
         }
         fileReader.readAsArrayBuffer(file)
       }
+    },
+    replaceText (text:string):string {
+      return text.replace(/[1-9]+:/g, '')
+    },
+    excelToJson (sheets:{[sheet: string]: XLSX.WorkSheet}):void {
+      const range = Number(sheets['Table 1']['!ref']?.slice(-2))
+      const data = sheets['Table 1']
+      const events = []
+      for (let index = 1; index < range; index++) {
+        if (data[`A${index}`].t !== 'n') {
+          continue
+        }
+        const event = {
+          no: data[`A${index}`].v,
+          type: this.replaceText(data[`B${index}`].v),
+          event: this.replaceText(data[`C${index}`].v),
+          length: data[`E${index}`].v,
+          category: this.replaceText(data[`F${index}`].v),
+          class: this.replaceText(data[`G${index}`].v),
+          groups: data[`H${index}`].v,
+          date: data[`I${index}`].w,
+          time: data[`J${index}`].w
+        }
+        events.push(event)
+      }
+      this.$emit('upload', JSON.stringify(events))
     }
+
+  },
+  computed: {
+
   }
 })
 </script>
