@@ -48,9 +48,9 @@
 import Vue from 'vue'
 
 type DataType = {
-  eventName:string,
-  eventNo:number,
-  groups: null | number,
+  eventName: string
+  eventNo: number
+  groups: null | number
   group: null | number
 }
 
@@ -69,8 +69,7 @@ export default Vue.extend({
       default: 0
     }
   },
-
-  data () :DataType {
+  data (): DataType {
     return {
       eventName: '',
       eventNo: 0,
@@ -79,39 +78,44 @@ export default Vue.extend({
     }
   },
   methods: {
-    nextEvent ():void {
+    nextEvent (): void {
       this.$emit('next-event')
     },
-    prevEvent ():void {
+    prevEvent (): void {
       this.$emit('prev-event')
     },
-    prevGroup ():void {
+    prevGroup (): void {
       if (this.group) {
         this.group -= 1
       } else {
         this.group = 1
       }
     },
-    nextGroup ():void {
+    nextGroup (): void {
       if (this.group) {
         this.group += 1
       } else {
         this.group = 1
       }
     },
-    readFile ():void {
-      const writeToFileSync = (filepath:string, content:string) => {
-        console.log(window.require)
+    readFile (): void {
+      const writeToFileSync = (filepath: string, content: string) => {
         if (window && window.require) {
-          console.log('try')
           const fs = window.require('fs')
           const beforContent = fs.readFileSync(filepath, 'utf8')
+          const afterContent = beforContent.replace(
+            /<p id="text">.+<\/p>/g,
+            `<p id="text"> ${content} </p>`
+          )
           console.log(beforContent)
-          // fs.writeFileSync(filepath, content)
+          fs.writeFileSync(filepath, afterContent)
         }
       }
       try {
-        writeToFileSync('../assets/sample.html', `${this.eventName} ${this.group}組`)
+        writeToFileSync(
+          'event.html',
+          ` ${this.eventName} ${this.group}組 `
+        )
       } catch (error) {
         console.log(error)
       }
@@ -129,28 +133,28 @@ export default Vue.extend({
     }
   },
   computed: {
-    disableNextGroup ():boolean {
+    disableNextGroup (): boolean {
       if (this.group === this.groups || !this.group) {
         return true
       } else {
         return false
       }
     },
-    disablePrevGroup ():boolean {
+    disablePrevGroup (): boolean {
       if (this.group === 1 || !this.group) {
         return true
       } else {
         return false
       }
     },
-    disableNextEvent ():boolean {
+    disableNextEvent (): boolean {
       if (this.lastEventNo === 0 || this.eventNo >= this.lastEventNo) {
         return true
       } else {
         return false
       }
     },
-    disablePrevEvent ():boolean {
+    disablePrevEvent (): boolean {
       if (this.firstEventNo === 0 || this.eventNo <= this.firstEventNo) {
         return true
       } else {
@@ -159,19 +163,23 @@ export default Vue.extend({
     }
   },
   watch: {
-    event (event:string):void {
+    event (event: string): void {
       if (event !== 'Not Selected') {
         const selectedEvent = JSON.parse(event)
         this.eventNo = selectedEvent.no
         this.groups = selectedEvent.groups
         this.group = 1
-        this.eventName = `No.${selectedEvent.no} ${selectedEvent.class}${selectedEvent.type} ` +
-                `${selectedEvent.length}${selectedEvent.event} ${selectedEvent.category}`
+        this.eventName =
+          `No.${selectedEvent.no} ${selectedEvent.class}${selectedEvent.type} ` +
+          `${selectedEvent.length}${selectedEvent.event} ${selectedEvent.category}`
         this.readFile()
       } else {
         this.eventName = ''
         this.group = null
       }
+    },
+    group ():void{
+      this.readFile()
     }
   }
 })
