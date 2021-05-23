@@ -98,6 +98,34 @@ export default Vue.extend({
       } else {
         this.group = 1
       }
+    },
+    readFile ():void {
+      const writeToFileSync = (filepath:string, content:string) => {
+        console.log(window.require)
+        if (window && window.require) {
+          console.log('try')
+          const fs = window.require('fs')
+          const beforContent = fs.readFileSync(filepath, 'utf8')
+          console.log(beforContent)
+          // fs.writeFileSync(filepath, content)
+        }
+      }
+      try {
+        writeToFileSync('../assets/sample.html', `${this.eventName} ${this.group}組`)
+      } catch (error) {
+        console.log(error)
+      }
+
+      // if (text) {
+      //   const blob = new Blob([text], { type: 'text/plain' })
+      //   const link = document.createElement('a')
+      //   link.href = URL.createObjectURL(blob)
+      //   link.download = [text] + '.txt'
+      //   link.click()
+      //   console.log('ok')
+      // } else {
+      //   console.log('error')
+      // }
     }
   },
   computed: {
@@ -138,7 +166,8 @@ export default Vue.extend({
         this.groups = selectedEvent.groups
         this.group = 1
         this.eventName = `No.${selectedEvent.no} ${selectedEvent.class}${selectedEvent.type} ` +
-                `${selectedEvent.length}${selectedEvent.event} ${selectedEvent.category} `
+                `${selectedEvent.length}${selectedEvent.event} ${selectedEvent.category}`
+        this.readFile()
       } else {
         this.eventName = ''
         this.group = null
