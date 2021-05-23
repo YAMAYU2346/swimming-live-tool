@@ -22,15 +22,7 @@
       </div>
 
       <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+      {{ time }}
     </v-app-bar>
     <v-navigation-drawer app clipped expand-on-hover>
       <v-list nav dense>
@@ -54,9 +46,26 @@
 <script lang="ts">
 import Vue from 'vue'
 
+type DataType={
+  time:string
+}
+
 export default Vue.extend({
   name: 'Header',
 
-  data: () => ({})
+  data: () => ({
+    time: ''
+  }),
+  mounted: function () {
+    this.updateTime()
+    const timerID = setInterval(this.updateTime, 10000)
+  },
+
+  methods: {
+    updateTime ():void {
+      const currentdate = new Date()
+      this.time = currentdate.getHours() + ':' + currentdate.getMinutes()
+    }
+  }
 })
 </script>
