@@ -26,9 +26,9 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import TimeTable from './TimeTable.vue'
-import UploadExcelFile from './UploadExcelForm.vue'
-import EventController from './EventController.vue'
+import TimeTable from '../components/TimeTable.vue'
+import UploadExcelFile from '../components/UploadExcelForm.vue'
+import EventController from '../components/EventController.vue'
 
 type DataType={
   events:string
