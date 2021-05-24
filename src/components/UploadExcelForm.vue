@@ -15,18 +15,8 @@
 import Vue from 'vue'
 import XLSX from 'xlsx'
 
-type DataType = {
-  sheets: string|ArrayBuffer
-}
-
 export default Vue.extend({
   name: 'UploadExcelForm',
-
-  data () :DataType {
-    return {
-      sheets: ''
-    }
-  },
   methods: {
     uploadExcelFile (file:File):void {
       if (file) {
@@ -72,9 +62,6 @@ export default Vue.extend({
       }
       this.$emit('upload', JSON.stringify(events), firstEventNo, lastEventNo)
     }
-
-  },
-  computed: {
 
   }
 })

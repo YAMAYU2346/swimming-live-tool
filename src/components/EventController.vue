@@ -1,44 +1,80 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="1">
-        <v-btn icon outlined @click="prevEvent" :disabled="disablePrevEvent">
-          <v-icon>mdi-chevron-left</v-icon>
-        </v-btn>
+      <v-col cols="8">
+        <v-row>
+          <v-col class="px-1" cols="1">
+            <v-btn
+              height='100%'
+              class="px-0"
+              block
+              color="primary"
+              @click="prevEvent"
+              :disabled="disablePrevEvent"
+            >
+              <v-icon>mdi-chevron-left</v-icon>
+            </v-btn>
+          </v-col>
+          <v-col class="px-0" cols="10">
+            <v-text-field
+              v-model="eventName"
+              outlined
+              readonly
+              dense
+              hide-details=""
+            ></v-text-field>
+          </v-col>
+          <v-col class="px-1" cols="1">
+            <v-btn
+              height='100%'
+              class="px-0"
+              block
+              color="primary"
+              @click="nextEvent"
+              :disabled="disableNextEvent"
+            >
+              <v-icon>mdi-chevron-right</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-col>
-      <v-col cols="6">
-        <v-text-field
-          v-model="eventName"
-          outlined
-          readonly
-          dense
-          hide-details=""
-        ></v-text-field>
-      </v-col>
-      <v-col cols="1">
-        <v-btn icon outlined @click="nextEvent" :disabled="disableNextEvent">
-          <v-icon>mdi-chevron-right</v-icon>
-        </v-btn>
-      </v-col>
-      <v-col cols="1">
-        <v-btn icon outlined @click="prevGroup" :disabled="disablePrevGroup">
-          <v-icon>mdi-chevron-left</v-icon>
-        </v-btn>
-      </v-col>
-      <v-col cols="2" class="">
-        <v-text-field
-          v-model="group"
-          outlined
-          readonly
-          dense
-          hide-details=""
-          suffix="組"
-        ></v-text-field>
-      </v-col>
-      <v-col cols="1">
-        <v-btn icon outlined @click="nextGroup" :disabled="disableNextGroup">
-          <v-icon>mdi-chevron-right</v-icon>
-        </v-btn>
+      <v-col cols="4">
+        <v-row>
+          <v-col class="px-1" cols="2">
+            <v-btn
+              height='100%'
+              class="px-0"
+              block
+              color="primary"
+              @click="prevGroup"
+              :disabled="disablePrevGroup"
+            >
+              <v-icon >mdi-chevron-left</v-icon>
+            </v-btn>
+          </v-col>
+          <v-col class="px-0" cols="8">
+            <v-text-field
+              v-model="group"
+              outlined
+              readonly
+              dense
+              hide-details=""
+              suffix="組"
+            ></v-text-field>
+          </v-col>
+          <v-col class="px-1" cols="2">
+            <v-btn
+              height='100%'
+              class="px-0"
+              block
+              color="primary"
+              @click="nextGroup"
+              :disabled="disableNextGroup"
+            >
+              <v-icon>mdi-chevron-right</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </v-container>
@@ -112,24 +148,10 @@ export default Vue.extend({
         }
       }
       try {
-        writeToFileSync(
-          'event.html',
-          ` ${this.eventName} ${this.group}組 `
-        )
+        writeToFileSync('event.html', ` ${this.eventName} ${this.group}組 `)
       } catch (error) {
         console.log(error)
       }
-
-      // if (text) {
-      //   const blob = new Blob([text], { type: 'text/plain' })
-      //   const link = document.createElement('a')
-      //   link.href = URL.createObjectURL(blob)
-      //   link.download = [text] + '.txt'
-      //   link.click()
-      //   console.log('ok')
-      // } else {
-      //   console.log('error')
-      // }
     }
   },
   computed: {
@@ -178,7 +200,7 @@ export default Vue.extend({
         this.group = null
       }
     },
-    group ():void{
+    group (): void {
       this.readFile()
     }
   }
