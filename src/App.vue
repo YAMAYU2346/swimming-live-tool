@@ -16,10 +16,6 @@ export default Vue.extend({
     Header
   },
   name: 'App',
-  created () {
-    this.$router.push('/')
-  },
-
   data: () => ({
     //
   })
