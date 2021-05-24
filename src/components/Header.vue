@@ -24,15 +24,15 @@
       <v-spacer></v-spacer>
       {{ time }}
     </v-app-bar>
-    <v-navigation-drawer app clipped expand-on-hover>
+    <v-navigation-drawer app clipped permanent expand-on-hover>
       <v-list nav dense>
-        <v-list-item link to='/'>
+        <v-list-item link to="/">
           <v-list-item-icon>
             <v-icon>mdi-home</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Home</v-list-item-title>
         </v-list-item>
-        <v-list-item link to='/time-table'>
+        <v-list-item link to="/time-table">
           <v-list-item-icon>
             <v-icon>mdi-calendar</v-icon>
           </v-list-item-icon>
@@ -59,7 +59,7 @@ type DataType={
 export default Vue.extend({
   name: 'Header',
 
-  data: () => ({
+  data: ():DataType => ({
     time: ''
   }),
   mounted: function () {
@@ -70,7 +70,18 @@ export default Vue.extend({
   methods: {
     updateTime ():void {
       const currentdate = new Date()
-      this.time = currentdate.getHours() + ':' + currentdate.getMinutes()
+      this.time = `${this.zeroPadding(currentdate.getHours(), 2)}:${this.zeroPadding(currentdate.getMinutes(), 2)}`
+    },
+    zeroPadding (num:number, len:number):string {
+      let zero = ''
+
+      // 0の文字列を作成
+      for (var i = 0; i < len; i++) {
+        zero += '0'
+      }
+
+      // zeroの文字列と、数字を結合し、後ろ２文字を返す
+      return (zero + num).slice(-len)
     }
   }
 })

@@ -5,7 +5,7 @@
         <v-row>
           <v-col class="px-1" cols="1">
             <v-btn
-              height='100%'
+              height="100%"
               class="px-0"
               block
               color="primary"
@@ -26,7 +26,7 @@
           </v-col>
           <v-col class="px-1" cols="1">
             <v-btn
-              height='100%'
+              height="100%"
               class="px-0"
               block
               color="primary"
@@ -42,14 +42,14 @@
         <v-row>
           <v-col class="px-1" cols="2">
             <v-btn
-              height='100%'
+              height="100%"
               class="px-0"
               block
               color="primary"
               @click="prevGroup"
               :disabled="disablePrevGroup"
             >
-              <v-icon >mdi-chevron-left</v-icon>
+              <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
           </v-col>
           <v-col class="px-0" cols="8">
@@ -64,7 +64,7 @@
           </v-col>
           <v-col class="px-1" cols="2">
             <v-btn
-              height='100%'
+              height="100%"
               class="px-0"
               block
               color="primary"
@@ -143,7 +143,6 @@ export default Vue.extend({
             /<p id="text">.+<\/p>/g,
             `<p id="text"> ${content} </p>`
           )
-          console.log(beforContent)
           fs.writeFileSync(filepath, afterContent)
         }
       }

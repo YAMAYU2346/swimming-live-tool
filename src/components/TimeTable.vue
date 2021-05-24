@@ -92,7 +92,6 @@ export default Vue.extend({
       this.$emit('updateEvent', this.event)
     },
     nextEvent ():void{
-      console.log('next')
       const eventIndex = this.eventList.findIndex((event) => {
         return event.no === this.eventNo
       })
