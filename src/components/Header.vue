@@ -38,7 +38,7 @@
           </v-list-item-icon>
           <v-list-item-title>Time Table</v-list-item-title>
         </v-list-item>
-        <v-list-item link>
+        <v-list-item link to="/setting">
           <v-list-item-icon>
             <v-icon>mdi-cog-outline</v-icon>
           </v-list-item-icon>

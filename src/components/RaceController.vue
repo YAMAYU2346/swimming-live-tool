@@ -147,7 +147,7 @@ export default Vue.extend({
         }
       }
       try {
-        writeToFileSync('race.html', ` ${this.raceName} ${this.group}組 `)
+        writeToFileSync(this.$store.getters.getCaptionPath, ` ${this.raceName} ${this.group}組 `)
       } catch (error) {
         console.log(error)
       }

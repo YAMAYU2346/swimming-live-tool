@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '../views/Home.vue'
 import TimeTableAdmin from '../views/TimeTableAdmin.vue'
+import Setting from '../views/Setting.vue'
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,11 @@ const routes: Array<RouteConfig> = [
     path: '/time-table',
     name: 'TimeTable',
     component: TimeTableAdmin
+  },
+  {
+    path: '/setting',
+    name: 'Setting',
+    component: Setting
   },
   {
     path: '/about',
