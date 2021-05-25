@@ -9,15 +9,15 @@
               class="px-0"
               block
               color="primary"
-              @click="prevEvent"
-              :disabled="disablePrevEvent"
+              @click="prevRace"
+              :disabled="disablePrevRace"
             >
               <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
           </v-col>
           <v-col class="px-0" cols="10">
             <v-text-field
-              v-model="eventName"
+              v-model="raceName"
               outlined
               readonly
               dense
@@ -30,8 +30,8 @@
               class="px-0"
               block
               color="primary"
-              @click="nextEvent"
-              :disabled="disableNextEvent"
+              @click="nextRace"
+              :disabled="disableNextRace"
             >
               <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
@@ -84,41 +84,41 @@
 import Vue from 'vue'
 
 type DataType = {
-  eventName: string
-  eventNo: number
+  raceName: string
+  raceNo: number
   groups: null | number
   group: null | number
 }
 
 export default Vue.extend({
-  name: 'EventController',
+  name: 'RaceController',
   props: {
-    event: {
+    race: {
       type: String
     },
-    firstEventNo: {
+    firstRaceNo: {
       type: Number,
       default: 0
     },
-    lastEventNo: {
+    lastRaceNo: {
       type: Number,
       default: 0
     }
   },
   data (): DataType {
     return {
-      eventName: '',
-      eventNo: 0,
+      raceName: '',
+      raceNo: 0,
       groups: null,
       group: null
     }
   },
   methods: {
-    nextEvent (): void {
-      this.$emit('next-event')
+    nextRace (): void {
+      this.$emit('next-race')
     },
-    prevEvent (): void {
-      this.$emit('prev-event')
+    prevRace (): void {
+      this.$emit('prev-race')
     },
     prevGroup (): void {
       if (this.group) {
@@ -147,7 +147,7 @@ export default Vue.extend({
         }
       }
       try {
-        writeToFileSync('event.html', ` ${this.eventName} ${this.group}組 `)
+        writeToFileSync('race.html', ` ${this.raceName} ${this.group}組 `)
       } catch (error) {
         console.log(error)
       }
@@ -168,15 +168,15 @@ export default Vue.extend({
         return false
       }
     },
-    disableNextEvent (): boolean {
-      if (this.lastEventNo === 0 || this.eventNo >= this.lastEventNo) {
+    disableNextRace (): boolean {
+      if (this.lastRaceNo === 0 || this.raceNo >= this.lastRaceNo) {
         return true
       } else {
         return false
       }
     },
-    disablePrevEvent (): boolean {
-      if (this.firstEventNo === 0 || this.eventNo <= this.firstEventNo) {
+    disablePrevRace (): boolean {
+      if (this.firstRaceNo === 0 || this.raceNo <= this.firstRaceNo) {
         return true
       } else {
         return false
@@ -184,18 +184,18 @@ export default Vue.extend({
     }
   },
   watch: {
-    event (event: string): void {
-      if (event !== 'Not Selected') {
-        const selectedEvent = JSON.parse(event)
-        this.eventNo = selectedEvent.no
-        this.groups = selectedEvent.groups
+    race (race: string): void {
+      if (race !== 'Not Selected') {
+        const selectedRace = JSON.parse(race)
+        this.raceNo = selectedRace.no
+        this.groups = selectedRace.groups
         this.group = 1
-        this.eventName =
-          `No.${selectedEvent.no} ${selectedEvent.class}${selectedEvent.type} ` +
-          `${selectedEvent.length}${selectedEvent.event} ${selectedEvent.category}`
+        this.raceName =
+          `No.${selectedRace.no} ${selectedRace.class}${selectedRace.type} ` +
+          `${selectedRace.length}${selectedRace.race} ${selectedRace.category}`
         this.readFile()
       } else {
-        this.eventName = ''
+        this.raceName = ''
         this.group = null
       }
     },

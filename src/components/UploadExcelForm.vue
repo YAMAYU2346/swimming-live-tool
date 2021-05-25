@@ -36,20 +36,20 @@ export default Vue.extend({
     excelToJson (sheets:{[sheet: string]: XLSX.WorkSheet}):void {
       const range = Number(sheets['Table 1']['!ref']?.slice(-2))
       const data = sheets['Table 1']
-      const events = []
-      let firstEventNo = 0
-      let lastEventNo = 0
+      const races = []
+      let firstRaceNo = 0
+      let lastRaceNo = 0
       for (let index = 1; index < range; index++) {
         if (!data[`A${index}`] || data[`A${index}`].t !== 'n') {
           continue
         }
-        if (firstEventNo === 0) {
-          firstEventNo = data[`A${index}`].v
+        if (firstRaceNo === 0) {
+          firstRaceNo = data[`A${index}`].v
         }
-        const event = {
+        const race = {
           no: data[`A${index}`].v,
           type: this.replaceText(data[`B${index}`].v),
-          event: this.replaceText(data[`C${index}`].v),
+          race: this.replaceText(data[`C${index}`].v),
           length: data[`E${index}`] ? data[`E${index}`].v : this.replaceText(data[`D${index}`].v),
           category: this.replaceText(data[`F${index}`].v),
           class: this.replaceText(data[`G${index}`].v),
@@ -57,10 +57,10 @@ export default Vue.extend({
           date: data[`I${index}`].w,
           time: data[`J${index}`].w
         }
-        lastEventNo = data[`A${index}`].v
-        events.push(event)
+        lastRaceNo = data[`A${index}`].v
+        races.push(race)
       }
-      this.$emit('upload', JSON.stringify(events), firstEventNo, lastEventNo)
+      this.$emit('upload', JSON.stringify(races), firstRaceNo, lastRaceNo)
     }
 
   }

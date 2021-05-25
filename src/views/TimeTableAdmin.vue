@@ -2,22 +2,22 @@
   <v-container>
     <v-row class="justify-end">
       <v-col cols="8">
-        <event-controller
-          :event="event"
-          :firstEventNo="firstEventNo"
-          :lastEventNo="lastEventNo"
-          @next-event="nextEvent"
-          @prev-event="prevEvent"
+        <race-controller
+          :race="race"
+          :firstRaceNo="firstRaceNo"
+          :lastRaceNo="lastRaceNo"
+          @next-race="nextRace"
+          @prev-race="prevRace"
       /></v-col>
       <v-col cols="4"><upload-excel-file @upload="getExcel" /></v-col>
     </v-row>
     <v-row class="text-center">
       <v-col cols="12"
         ><time-table
-          :events="events"
-          :firstEventNo="firstEventNo"
-          :isNextEvent="isNextEvent"
-          @updateEvent="getEvent"
+          :races="races"
+          :firstRaceNo="firstRaceNo"
+          :isNextRace="isNextRace"
+          @updateRace="getRace"
           ref="table"
       /></v-col>
     </v-row>
@@ -28,47 +28,48 @@
 import Vue from 'vue'
 import TimeTable from '../components/TimeTable.vue'
 import UploadExcelFile from '../components/UploadExcelForm.vue'
-import EventController from '../components/EventController.vue'
+import RaceController from '../components/RaceController.vue'
 
 type DataType={
-  events:string
-  event:string
-  firstEventNo:number
-  lastEventNo:number
-  isNextEvent:boolean
+  races:string
+  race:string
+  firstRaceNo:number
+  lastRaceNo:number
+  isNextRace:boolean
 }
 
 export default Vue.extend({
   components: {
     TimeTable,
     UploadExcelFile,
-    EventController
+    RaceController
   },
   name: 'TimeTableAdmin',
 
   data () :DataType {
     return {
-      events: '',
-      event: 'Not Selected',
-      firstEventNo: 0,
-      lastEventNo: 0,
-      isNextEvent: true
+      races: '',
+      race: 'Not Selected',
+      firstRaceNo: 0,
+      lastRaceNo: 0,
+      isNextRace: true
     }
   },
   methods: {
-    getExcel (events:string, firstEventNo:number, lastEventNo:number):void {
-      this.firstEventNo = firstEventNo
-      this.lastEventNo = lastEventNo
-      this.events = events
+    getExcel (races:string, firstRaceNo:number, lastRaceNo:number):void {
+      this.firstRaceNo = firstRaceNo
+      this.lastRaceNo = lastRaceNo
+      this.races = races
     },
-    getEvent (event:string):void {
-      this.event = event
+    getRace (race:string):void {
+      // 競技一覧を保存
+      this.race = race
     },
-    nextEvent ():void{
-      (this.$refs.table as InstanceType<typeof TimeTable>).nextEvent()
+    nextRace ():void{
+      (this.$refs.table as InstanceType<typeof TimeTable>).nextRace()
     },
-    prevEvent ():void{
-      (this.$refs.table as InstanceType<typeof TimeTable>).prevEvent()
+    prevRace ():void{
+      (this.$refs.table as InstanceType<typeof TimeTable>).prevRace()
     }
   }
 })
