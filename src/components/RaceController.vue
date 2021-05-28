@@ -88,6 +88,7 @@ type DataType = {
   raceNo: number
   groups: null | number
   group: null | number
+  isFinal: boolean
 }
 
 export default Vue.extend({
@@ -110,7 +111,8 @@ export default Vue.extend({
       raceName: '',
       raceNo: 0,
       groups: null,
-      group: null
+      group: null,
+      isFinal: false
     }
   },
   methods: {
@@ -140,14 +142,18 @@ export default Vue.extend({
           const fs = window.require('fs')
           const beforContent = fs.readFileSync(filepath, 'utf8')
           const afterContent = beforContent.replace(
-            /<p id="text">.+<\/p>/g,
-            `<p id="text"> ${content} </p>`
+            /<h2 id="text">.+<\/h2>/g,
+            `<h2 id="text"> ${content} </h2>`
           )
           fs.writeFileSync(filepath, afterContent)
         }
       }
       try {
-        writeToFileSync(this.$store.getters.getCaptionPath, ` ${this.raceName} ${this.group}組 `)
+        if (this.isFinal) {
+          writeToFileSync(this.$store.getters.getCaptionPath, `${this.raceName}`)
+        } else {
+          writeToFileSync(this.$store.getters.getCaptionPath, `${this.raceName} ${this.group}組`)
+        }
       } catch (error) {
         console.log(error)
       }
@@ -190,9 +196,15 @@ export default Vue.extend({
         this.raceNo = selectedRace.no
         this.groups = selectedRace.groups
         this.group = 1
+        if (selectedRace.category === '決勝') {
+          this.isFinal = true
+        } else {
+          this.isFinal = false
+        }
         this.raceName =
           `No.${selectedRace.no} ${selectedRace.class}${selectedRace.type} ` +
           `${selectedRace.length}${selectedRace.race} ${selectedRace.category}`
+
         this.readFile()
       } else {
         this.raceName = ''
