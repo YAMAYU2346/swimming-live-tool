@@ -39,7 +39,7 @@ export default Vue.extend({
       const races = []
       let firstRaceNo = 0
       let lastRaceNo = 0
-      for (let index = 1; index < range; index++) {
+      for (let index = 1; index <= range; index++) {
         if (!data[`A${index}`] || data[`A${index}`].t !== 'n') {
           continue
         }
