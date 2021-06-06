@@ -41,6 +41,7 @@ export default Vue.extend({
   },
   methods: {
     getCaptionPath (file:File): void {
+      this.path = file.path
       this.$store.dispatch('updateCaptionPath', file.path)
     }
   },
