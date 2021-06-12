@@ -156,6 +156,7 @@ export default Vue.extend({
         }
       } catch (error) {
         console.log(error)
+        this.$emit('alert', '編集するHTMLファイルが指定されていません。設定画面を確認してください。')
       }
     }
   },
@@ -193,6 +194,7 @@ export default Vue.extend({
     race (race: string): void {
       if (race !== 'Not Selected') {
         const selectedRace = JSON.parse(race)
+        console.log(selectedRace)
         this.raceNo = selectedRace.no
         this.groups = selectedRace.groups
         this.group = 1
