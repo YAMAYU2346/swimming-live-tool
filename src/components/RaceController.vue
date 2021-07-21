@@ -142,7 +142,6 @@ export default Vue.extend({
         if (window && window.require) {
           const fs = window.require('fs')
           const filePathNew = path.join(path.dirname(__dirname), 'race-caption/caption.html')
-          console.log(filePathNew)
           const beforContent = fs.readFileSync(filePathNew, 'utf8')
           const afterContent = beforContent.replace(
             /<h2 id="text">.+<\/h2>/g,
