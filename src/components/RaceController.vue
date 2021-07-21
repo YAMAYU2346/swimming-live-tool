@@ -82,6 +82,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import path from 'path'
 
 type DataType = {
   raceName: string
@@ -140,12 +141,14 @@ export default Vue.extend({
       const writeToFileSync = (filepath: string, content: string) => {
         if (window && window.require) {
           const fs = window.require('fs')
-          const beforContent = fs.readFileSync(filepath, 'utf8')
+          const filePathNew = path.join(path.dirname(__dirname), 'race-caption/caption.html')
+          console.log(filePathNew)
+          const beforContent = fs.readFileSync(filePathNew, 'utf8')
           const afterContent = beforContent.replace(
             /<h2 id="text">.+<\/h2>/g,
             `<h2 id="text"> ${content} </h2>`
           )
-          fs.writeFileSync(filepath, afterContent)
+          fs.writeFileSync(filePathNew, afterContent)
         }
       }
       try {
