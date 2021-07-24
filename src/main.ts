@@ -10,7 +10,7 @@ import path from 'path'
 const exApp = express()
 exApp.use(express.static(path.dirname(__dirname)))
 exApp.use(serveIndex(path.dirname(__dirname), { icons: true }))
-exApp.listen(process.env.PORT || 3000)
+exApp.listen(process.env.PORT || 3001)
 
 Vue.config.productionTip = false
 
