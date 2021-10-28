@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="8">
+      <v-col>
         <v-row>
           <v-col class="px-1" cols="1">
             <v-btn
@@ -38,7 +38,7 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col cols="4">
+      <v-col cols="4" v-if="show">
         <v-row>
           <v-col class="px-1" cols="2">
             <v-btn
@@ -105,6 +105,10 @@ export default Vue.extend({
     lastRaceNo: {
       type: Number,
       default: 0
+    },
+    show: {
+      type: Boolean,
+      default: true
     }
   },
   data (): DataType {

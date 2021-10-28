@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '../views/Home.vue'
 import TimeTableAdmin from '../views/TimeTableAdmin.vue'
+import ISL from '../views/ISL.vue'
 import Setting from '../views/Setting.vue'
 
 Vue.use(VueRouter)
@@ -18,17 +19,14 @@ const routes: Array<RouteConfig> = [
     component: TimeTableAdmin
   },
   {
+    path: '/isl',
+    name: 'ISL',
+    component: ISL
+  },
+  {
     path: '/setting',
     name: 'Setting',
     component: Setting
-  },
-  {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   }
 ]
 

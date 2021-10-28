@@ -2,13 +2,21 @@
   <v-container>
     <v-row dense>
       <v-col cols="12">
-        <v-card to='/time-table'>
+        <v-card to="/time-table">
           <v-card-title class="text-h5">
-            <v-icon>mdi-calendar</v-icon>Time Table
+            <v-icon>mdi-calendar</v-icon>Race Title
           </v-card-title>
           <v-card-subtitle>
             試合の競技一覧を取得・選択し、OBSのテロップに反映させます
           </v-card-subtitle>
+        </v-card>
+      </v-col>
+      <v-col cols="12">
+        <v-card to="/isl">
+          <v-card-title class="text-h5">
+            <v-icon>mdi-calendar</v-icon>ISL Mode
+          </v-card-title>
+          <v-card-subtitle> ISL </v-card-subtitle>
         </v-card>
       </v-col>
     </v-row>
