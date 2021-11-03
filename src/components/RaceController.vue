@@ -86,6 +86,8 @@ import path from 'path'
 
 type DataType = {
   raceName: string
+  record1: string
+  record2: string
   raceNo: number
   groups: null | number
   group: null | number
@@ -107,9 +109,11 @@ export default Vue.extend({
       default: 0
     }
   },
-  data (): DataType {
+  data(): DataType {
     return {
       raceName: '',
+      record1: '',
+      record2: '',
       raceNo: 0,
       groups: null,
       group: null,
@@ -117,31 +121,34 @@ export default Vue.extend({
     }
   },
   methods: {
-    nextRace (): void {
+    nextRace(): void {
       this.$emit('next-race')
     },
-    prevRace (): void {
+    prevRace(): void {
       this.$emit('prev-race')
     },
-    prevGroup (): void {
+    prevGroup(): void {
       if (this.group) {
         this.group -= 1
       } else {
         this.group = 1
       }
     },
-    nextGroup (): void {
+    nextGroup(): void {
       if (this.group) {
         this.group += 1
       } else {
         this.group = 1
       }
     },
-    readFile (): void {
-      const writeToFileSync = (filepath: string, content: string) => {
+    readFile(): void {
+      const writeTitleToFileSync = (filepath: string, content: string) => {
         if (window && window.require) {
           const fs = window.require('fs')
-          const filePathNew = path.join(path.dirname(__dirname), 'race-caption/caption.html')
+          const filePathNew = path.join(
+            path.dirname(__dirname),
+            'race-caption/caption.html'
+          )
           const beforContent = fs.readFileSync(filePathNew, 'utf8')
           const afterContent = beforContent.replace(
             /<h2 id="text">.+<\/h2>/g,
@@ -150,41 +157,75 @@ export default Vue.extend({
           fs.writeFileSync(filePathNew, afterContent)
         }
       }
+      const writeRecordToFileSync = (
+        record1: string,
+        record2: string
+      ) => {
+        if (window && window.require) {
+          const fs = window.require('fs')
+          const filePathNew = path.join(
+            path.dirname(__dirname),
+            'records/records.html'
+          )
+          console.log(record1)
+          const beforContent = fs.readFileSync(filePathNew, 'utf8')
+          let afterContent = beforContent.replace(
+            /<h3 id="record1">.*<\/h3>/g,
+            `<h3 id="record1"> ${record1} </h3>`
+          )
+          afterContent = afterContent.replace(
+            /<h3 id="record2">.*<\/h3>/g,
+            `<h3 id="record2"> ${record2} </h3>`
+          )
+          console.log(afterContent)
+          fs.writeFileSync(filePathNew, afterContent)
+        }
+      }
       try {
         if (this.isFinal) {
-          writeToFileSync(this.$store.getters.getCaptionPath, `${this.raceName}`)
+          writeTitleToFileSync(
+            this.$store.getters.getCaptionPath,
+            `${this.raceName}`
+          )
         } else {
-          writeToFileSync(this.$store.getters.getCaptionPath, `${this.raceName} ${this.group}組`)
+          writeTitleToFileSync(
+            this.$store.getters.getCaptionPath,
+            `${this.raceName} ${this.group}組`
+          )
         }
+        writeRecordToFileSync(this.record1, this.record2)
       } catch (error) {
         console.log(error)
-        this.$emit('alert', '編集するHTMLファイルが指定されていません。設定画面を確認してください。')
+        this.$emit(
+          'alert',
+          '編集するHTMLファイルが指定されていません。設定画面を確認してください。'
+        )
       }
     }
   },
   computed: {
-    disableNextGroup (): boolean {
+    disableNextGroup(): boolean {
       if (this.group === this.groups || !this.group) {
         return true
       } else {
         return false
       }
     },
-    disablePrevGroup (): boolean {
+    disablePrevGroup(): boolean {
       if (this.group === 1 || !this.group) {
         return true
       } else {
         return false
       }
     },
-    disableNextRace (): boolean {
+    disableNextRace(): boolean {
       if (this.lastRaceNo === 0 || this.raceNo >= this.lastRaceNo) {
         return true
       } else {
         return false
       }
     },
-    disablePrevRace (): boolean {
+    disablePrevRace(): boolean {
       if (this.firstRaceNo === 0 || this.raceNo <= this.firstRaceNo) {
         return true
       } else {
@@ -193,7 +234,7 @@ export default Vue.extend({
     }
   },
   watch: {
-    race (race: string): void {
+    race(race: string): void {
       if (race !== 'Not Selected') {
         const selectedRace = JSON.parse(race)
         console.log(selectedRace)
@@ -208,14 +249,23 @@ export default Vue.extend({
         this.raceName =
           `No.${selectedRace.no} ${selectedRace.class}${selectedRace.type} ` +
           `${selectedRace.length}${selectedRace.race} ${selectedRace.category}`
-
+        this.record1 = this.$store.getters.getRecord1(
+          selectedRace.type,
+          selectedRace.race,
+          selectedRace.length
+        )
+        this.record2 = this.$store.getters.getRecord2(
+          selectedRace.type,
+          selectedRace.race,
+          selectedRace.length
+        )
         this.readFile()
       } else {
         this.raceName = ''
         this.group = null
       }
     },
-    group (): void {
+    group(): void {
       this.readFile()
     }
   }
