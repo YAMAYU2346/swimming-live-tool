@@ -13,6 +13,7 @@
           dense
           hide-details
           @change="applyChanges"
+          @blur="applyChanges"
         ></v-text-field>
       </v-col>
       <v-col cols="9">
@@ -38,6 +39,7 @@
           dense
           hide-details
           @change="applyChanges"
+          @blur="applyChanges"
         ></v-text-field>
       </v-col>
       <v-col cols="9">
@@ -126,6 +128,7 @@ export default Vue.extend({
     applyChanges() {
       const recordAbbr1 = this.recordAbbr1
       const recordAbbr2 = this.recordAbbr2
+      console.log(recordAbbr2)
       this.$store.dispatch('updateRecordAbbr', { recordAbbr1, recordAbbr2 })
     }
 
@@ -135,6 +138,7 @@ export default Vue.extend({
     // }
   },
   mounted: function() {
+    console.log('mounted')
     const recordAbbrs = this.$store.getters.getRecordAbbr
     this.recordAbbr1 = recordAbbrs.recordAbbr1
     this.recordAbbr2 = recordAbbrs.recordAbbr2

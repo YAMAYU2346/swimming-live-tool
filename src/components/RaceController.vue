@@ -170,12 +170,12 @@ export default Vue.extend({
           console.log(record1)
           const beforContent = fs.readFileSync(filePathNew, 'utf8')
           let afterContent = beforContent.replace(
-            /<h3 id="record1">.*<\/h3>/g,
-            `<h3 id="record1"> ${record1} </h3>`
+            /<span id="record1">.*<\/span>/g,
+            `<span id="record1"> ${record1} </span>`
           )
           afterContent = afterContent.replace(
-            /<h3 id="record2">.*<\/h3>/g,
-            `<h3 id="record2"> ${record2} </h3>`
+            /<span id="record2">.*<\/span>/g,
+            `<span id="record2"> ${record2} </span>`
           )
           console.log(afterContent)
           fs.writeFileSync(filePathNew, afterContent)

@@ -87,12 +87,16 @@ export default new Vuex.Store({
       state.lastRaceNo = lastRaceNo
     },
     updateRecord1(state, { record }) {
+      state.record1 = record
       persistentStore.set('record1', record)
     },
     updateRecord2(state, { record }) {
+      state.record2 = record
       persistentStore.set('record2', record)
     },
     updateRecordAbbr(state, { recordAbbr1, recordAbbr2 }) {
+      state.recordAbbr1 = recordAbbr1
+      state.recordAbbr2 = recordAbbr2
       persistentStore.set('recordAbbr1', recordAbbr1)
       persistentStore.set('recordAbbr2', recordAbbr2)
     }

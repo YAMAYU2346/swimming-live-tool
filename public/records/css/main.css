@@ -1,18 +1,17 @@
 body {
-    font-family: 'Noto Sans JP', sans-serif;
-  }
-.box {
-    position: relative;
-    background-color: rgba(0, 0, 0, .5);
+  font-family: 'Noto Sans JP', sans-serif;
 }
-h3 {
-    position: relative;
-    margin: 0% 5% 0% 5%;
-    padding: 1rem 3rem;
-    font-size: 100px;
-    text-shadow: 0 1px 0 #000, 0 4px 0 #000, 0 5px 12px rgba(0, 0, 0, .2);
-    /* -webkit-transform: skew(-15deg);
-    transform: skew(-15deg); */
-    color: #fff;
+.box{
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+span {
+  margin: 1% 8% 1% 8%;
+  font-size: 50px;
+  text-shadow: 0 1px 0 #000, 0 4px 0 #000, 0 5px 12px rgba(0, 0, 0, 0.2);
+  color: #fff;
+  
+}
 
-  }
