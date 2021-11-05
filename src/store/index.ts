@@ -8,18 +8,20 @@ const persistentStore = new Store()
 
 export default new Vuex.Store({
   state: {
-    captionPath: persistentStore.get('captionPath') || '',
+    timeTableFile: persistentStore.get('timeTableFile') || '',
     timetable: '',
     firstRaceNo: 0,
     lastRaceNo: 0,
     recordAbbr1: persistentStore.get('recordAbbr1') || '',
     recordAbbr2: persistentStore.get('recordAbbr2') || '',
     record1: (persistentStore.get('record1') as string) || '',
-    record2: (persistentStore.get('record2') as string) || ''
+    record2: (persistentStore.get('record2') as string) || '',
+    recordFile1: (persistentStore.get('recordFile1') as File) || null,
+    recordFile2: (persistentStore.get('recordFile2') as File) || null
   },
   getters: {
-    getCaptionPath(state) {
-      return state.captionPath
+    getTimeTableFile(state) {
+      return state.timeTableFile
     },
     getTimeTableInfo(state) {
       return {
@@ -70,16 +72,19 @@ export default new Vuex.Store({
         return ''
       }
     },
-    getRecordAbbr(state) {
+    getRecordInfo(state) {
+      console.log(state.recordFile1)
       return {
         recordAbbr1: state.recordAbbr1,
-        recordAbbr2: state.recordAbbr2
+        recordAbbr2: state.recordAbbr2,
+        recordFile1: state.recordFile1,
+        recordFile2: state.recordFile2
       }
     }
   },
   mutations: {
-    updateCaptionPath(state, path: string) {
-      persistentStore.set('captionPath', path)
+    updateTimeTableFile(state, timeTableFile: File) {
+      persistentStore.set('timeTableFile', timeTableFile)
     },
     updateRaceInfo(state, { timetable, firstRaceNo, lastRaceNo }) {
       state.timetable = timetable
@@ -99,11 +104,21 @@ export default new Vuex.Store({
       state.recordAbbr2 = recordAbbr2
       persistentStore.set('recordAbbr1', recordAbbr1)
       persistentStore.set('recordAbbr2', recordAbbr2)
+    },
+    updateRecordFile(state, { recordFile, num }) {
+      if (recordFile && num === 1) {
+        console.log('filename')
+        state.recordFile1 = recordFile
+        // persistentStore.set('recordFile1', recordFile)
+      } else if (recordFile && num === 2) {
+        state.recordFile2 = recordFile
+        // persistentStore.set('recordFile1', recordFile)
+      }
     }
   },
   actions: {
-    updateCaptionPath(context, path: string) {
-      context.commit('updateCaptionPath', path)
+    updateTimeTableFile(context, timeTableFile: File) {
+      context.commit('updateTimeTableFile', timeTableFile)
     },
     updateRaceInfo(context, { timetable, firstRaceNo, lastRaceNo }) {
       context.commit('updateRaceInfo', {
@@ -129,6 +144,12 @@ export default new Vuex.Store({
       context.commit('updateRecordAbbr', {
         recordAbbr1,
         recordAbbr2
+      })
+    },
+    updateRecordFile(context, { recordFile, num }) {
+      context.commit('updateRecordFile', {
+        recordFile,
+        num
       })
     }
   },

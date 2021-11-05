@@ -19,12 +19,12 @@
       <v-col cols="9">
         <v-file-input
           label="記録ファイル（.txt)"
-          v-model="fileName2"
+          v-model="file1"
           outlined
           dense
           truncate-length="50"
           accept=".txt"
-          @change="uploadExcelFile1"
+          @change="uploadRecordFile1"
           :messages="recordsample1"
         ></v-file-input>
       </v-col>
@@ -45,10 +45,11 @@
       <v-col cols="9">
         <v-file-input
           label="記録ファイル（.txt)"
+          v-model="file2"
           outlined
           dense
           truncate-length="50"
-          @change="uploadExcelFile2"
+          @change="uploadRecordFile2"
           :messages="recordsample2"
         ></v-file-input>
       </v-col>
@@ -62,8 +63,8 @@ import Vue from 'vue'
 type DataType = {
   recordAbbr1: string
   recordAbbr2: string
-  fileName1: string | null
-  fileName2: string | null
+  file1: File | null
+  file2: File | null
   recordsample1: string
   recordsample2: string
 }
@@ -76,18 +77,26 @@ export default Vue.extend({
     return {
       recordAbbr1: '',
       recordAbbr2: '',
-      fileName1: null,
-      fileName2: null,
+      file1: null,
+      file2: null,
       recordsample1: '',
       recordsample2: ''
     }
   },
   methods: {
-    uploadExcelFile1(file: File): void {
+    uploadRecordFile1(file: File): void {
       this.loadRecordFile(file, 1)
+      this.$store.dispatch('updateRecordFile', {
+        recordFile: file,
+        num: 1
+      })
     },
-    uploadExcelFile2(file: File): void {
+    uploadRecordFile2(file: File): void {
       this.loadRecordFile(file, 2)
+      this.$store.dispatch('updateRecordFile', {
+        recordFile: file,
+        num: 2
+      })
     },
     loadRecordFile(file: File, num: number) {
       if (file) {
@@ -120,7 +129,8 @@ export default Vue.extend({
           }
           const record = JSON.stringify(linesArr)
           this.$store.dispatch('updateRecord', {
-            record, num
+            record,
+            num
           })
         }
       }
@@ -128,20 +138,16 @@ export default Vue.extend({
     applyChanges() {
       const recordAbbr1 = this.recordAbbr1
       const recordAbbr2 = this.recordAbbr2
-      console.log(recordAbbr2)
       this.$store.dispatch('updateRecordAbbr', { recordAbbr1, recordAbbr2 })
     }
-
-    // getCaptionPath(file: File): void {
-    //   this.path = file.path
-    //   this.$store.dispatch('updateCaptionPath', file.path)
-    // }
   },
   mounted: function() {
-    console.log('mounted')
-    const recordAbbrs = this.$store.getters.getRecordAbbr
-    this.recordAbbr1 = recordAbbrs.recordAbbr1
-    this.recordAbbr2 = recordAbbrs.recordAbbr2
+    const recordInfo = this.$store.getters.getRecordInfo
+    console.log(recordInfo)
+    this.recordAbbr1 = recordInfo.recordAbbr1
+    this.recordAbbr2 = recordInfo.recordAbbr2
+    this.file1 = recordInfo.recordFile1
+    this.file2 = recordInfo.recordFile2
   }
 })
 </script>
