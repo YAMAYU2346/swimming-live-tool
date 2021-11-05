@@ -64,7 +64,7 @@ export default Vue.extend({
               : '',
             groups: Number(String(data[`G${index}`].v).replace('組', '')),
             date: data[`H${index}`] ? data[`H${index}`].w : '',
-            time: data[`I${index}`] ? data[`I${index}`].v : '',
+            time: data[`I${index}`] ? data[`I${index}`].v : ''
           }
           lastRaceNo = data[`A${index}`].v
           races.push(race)
