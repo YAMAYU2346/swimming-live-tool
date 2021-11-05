@@ -16,8 +16,10 @@ export default new Vuex.Store({
     recordAbbr2: persistentStore.get('recordAbbr2') || '',
     record1: (persistentStore.get('record1') as string) || '',
     record2: (persistentStore.get('record2') as string) || '',
-    recordFile1: (persistentStore.get('recordFile1') as File) || null,
-    recordFile2: (persistentStore.get('recordFile2') as File) || null
+    recordFile1: null,
+    recordFile2: null,
+    recordFileName1: persistentStore.get('recordFileName1') || '',
+    recordFileName2: persistentStore.get('recordFileName2') || ''
   },
   getters: {
     getTimeTableFile(state) {
@@ -34,6 +36,12 @@ export default new Vuex.Store({
       return {
         record1: state.record1,
         record2: state.record2
+      }
+    },
+    getRecordFileName(state) {
+      return {
+        recordFileName1: state.recordFileName1,
+        recordFileName2: state.recordFileName2
       }
     },
     getRecord1: state => (type: string, race: string, length: string) => {
@@ -78,7 +86,9 @@ export default new Vuex.Store({
         recordAbbr1: state.recordAbbr1,
         recordAbbr2: state.recordAbbr2,
         recordFile1: state.recordFile1,
-        recordFile2: state.recordFile2
+        recordFile2: state.recordFile2,
+        recordFileName1: state.recordFileName1,
+        recordFileName2: state.recordFileName2
       }
     }
   },
@@ -105,14 +115,21 @@ export default new Vuex.Store({
       persistentStore.set('recordAbbr1', recordAbbr1)
       persistentStore.set('recordAbbr2', recordAbbr2)
     },
+    updateRecordFileName(state, { recordFileName1, recordFileName2 }) {
+      state.recordFileName1 = recordFileName1
+      state.recordFileName2 = recordFileName2
+      persistentStore.set('recordFileName1', recordFileName1)
+      persistentStore.set('recordFileName2', recordFileName2)
+    },
     updateRecordFile(state, { recordFile, num }) {
       if (recordFile && num === 1) {
-        console.log('filename')
         state.recordFile1 = recordFile
-        // persistentStore.set('recordFile1', recordFile)
+        state.recordFileName1 = recordFile.name
+        persistentStore.set('recordFileName1', recordFile.name)
       } else if (recordFile && num === 2) {
         state.recordFile2 = recordFile
-        // persistentStore.set('recordFile1', recordFile)
+        state.recordFileName2 = recordFile.name
+        persistentStore.set('recordFileName2', recordFile.name)
       }
     }
   },
@@ -128,8 +145,6 @@ export default new Vuex.Store({
       })
     },
     updateRecord(context, { record, num }) {
-      console.log(record)
-      console.log(num)
       if (num === 1) {
         context.commit('updateRecord1', {
           record

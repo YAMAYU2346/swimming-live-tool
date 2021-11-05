@@ -148,6 +148,8 @@ export default Vue.extend({
     this.recordAbbr2 = recordInfo.recordAbbr2
     this.file1 = recordInfo.recordFile1
     this.file2 = recordInfo.recordFile2
+    this.recordsample1 = '登録済みファイル: ' + recordInfo.recordFileName1
+    this.recordsample2 = '登録済みファイル: ' + recordInfo.recordFileName2
   }
 })
 </script>
