@@ -131,6 +131,25 @@ export default new Vuex.Store({
         state.recordFileName2 = recordFile.name
         persistentStore.set('recordFileName2', recordFile.name)
       }
+    },
+    deleteRecordInfo(state, { num }){
+      if (num === 1) {
+        state.record1 = ''
+        state.recordAbbr1 = ''
+        state.recordFile1 = null
+        state.recordFileName1 = ''
+        persistentStore.delete('record1')
+        persistentStore.delete('recordAbbr1')
+        persistentStore.delete('recordFileName1')
+      } else if (num === 2) {
+        state.record2 = ''
+        state.recordAbbr2 = ''
+        state.recordFile2 = null
+        state.recordFileName2 = ''
+        persistentStore.delete('record2')
+        persistentStore.delete('recordAbbr2')
+        persistentStore.delete('recordFileName2')
+      }
     }
   },
   actions: {
@@ -164,6 +183,11 @@ export default new Vuex.Store({
     updateRecordFile(context, { recordFile, num }) {
       context.commit('updateRecordFile', {
         recordFile,
+        num
+      })
+    },
+    deleteRecordInfo(context, { num }) {
+      context.commit('deleteRecordInfo', {
         num
       })
     }
