@@ -9,6 +9,11 @@ module.exports = {
             from: 'public/race-caption/',
             to: 'race-caption',
             filter: ['**/*']
+          },
+          {
+            from: 'public/records/',
+            to: 'records',
+            filter: ['**/*']
           }
         ]
       }
