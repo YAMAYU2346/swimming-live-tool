@@ -86,6 +86,8 @@ import path from 'path'
 
 type DataType = {
   raceName: string
+  record1: string
+  record2: string
   raceNo: number
   groups: null | number
   group: null | number
@@ -111,9 +113,11 @@ export default Vue.extend({
       default: true
     }
   },
-  data (): DataType {
+  data(): DataType {
     return {
       raceName: '',
+      record1: '',
+      record2: '',
       raceNo: 0,
       groups: null,
       group: null,
@@ -121,31 +125,40 @@ export default Vue.extend({
     }
   },
   methods: {
-    nextRace (): void {
+    // 次のレース
+    nextRace(): void {
       this.$emit('next-race')
     },
-    prevRace (): void {
+    // 前のレース
+    prevRace(): void {
       this.$emit('prev-race')
     },
-    prevGroup (): void {
+    // 前の組
+    prevGroup(): void {
       if (this.group) {
         this.group -= 1
       } else {
         this.group = 1
       }
     },
-    nextGroup (): void {
+    // 次の組
+    nextGroup(): void {
       if (this.group) {
         this.group += 1
       } else {
         this.group = 1
       }
     },
-    readFile (): void {
-      const writeToFileSync = (filepath: string, content: string) => {
+    // レースタイトル・記録の書き込み
+    readFile(): void {
+      // レースタイトル更新
+      const writeTitleToFileSync = (filepath: string, content: string) => {
         if (window && window.require) {
           const fs = window.require('fs')
-          const filePathNew = path.join(path.dirname(__dirname), 'race-caption/caption.html')
+          const filePathNew = path.join(
+            path.dirname(__dirname),
+            'race-caption/caption.html'
+          )
           const beforContent = fs.readFileSync(filePathNew, 'utf8')
           const afterContent = beforContent.replace(
             /<h2 id="text">.+<\/h2>/g,
@@ -154,41 +167,84 @@ export default Vue.extend({
           fs.writeFileSync(filePathNew, afterContent)
         }
       }
-      try {
-        if (this.isFinal) {
-          writeToFileSync(this.$store.getters.getCaptionPath, `${this.raceName}`)
-        } else {
-          writeToFileSync(this.$store.getters.getCaptionPath, `${this.raceName} ${this.group}組`)
+      // 記録更新
+      // TODO 可変式
+      const writeRecordToFileSync = (record1: string, record2: string) => {
+        if (window && window.require) {
+          const fs = window.require('fs')
+          const filePathNew = path.join(
+            path.dirname(__dirname),
+            'records/records.html'
+          )
+          console.log(record1)
+          const beforContent = fs.readFileSync(filePathNew, 'utf8')
+          let afterContent = beforContent.replace(
+            /<span id="record1">.*<\/span>/g,
+            `<span id="record1"> ${record1} </span>`
+          )
+          afterContent = afterContent.replace(
+            /<span id="record2">.*<\/span>/g,
+            `<span id="record2"> ${record2} </span>`
+          )
+          console.log(afterContent)
+          fs.writeFileSync(filePathNew, afterContent)
         }
+      }
+      try {
+        // 決勝判定
+        if (this.isFinal) {
+          // 決勝の場合、組数表示なし（タイム決勝は除く）
+          writeTitleToFileSync(
+            this.$store.getters.getCaptionPath,
+            `${this.raceName}`
+          )
+        } else {
+          // 予選・タイム決勝の場合、組数を表示
+          writeTitleToFileSync(
+            this.$store.getters.getCaptionPath,
+            `${this.raceName} ${this.group}組`
+          )
+        }
+        // レコードを更新
+        writeRecordToFileSync(this.record1, this.record2)
       } catch (error) {
+        // HTMLファイルの指定が不要になったので、削除予定
         console.log(error)
-        this.$emit('alert', '編集するHTMLファイルが指定されていません。設定画面を確認してください。')
+        this.$emit(
+          'alert',
+          '編集するHTMLファイルが指定されていません。設定画面を確認してください。'
+        )
       }
     }
   },
   computed: {
-    disableNextGroup (): boolean {
+    // ボタン有効無効管理（次の組がない場合等）
+    // 最終組かどうか判定し、次の組ボタンを制御
+    disableNextGroup(): boolean {
       if (this.group === this.groups || !this.group) {
         return true
       } else {
         return false
       }
     },
-    disablePrevGroup (): boolean {
+    // 1組目があるかどうか判定し、前の組ボタンを制御
+    disablePrevGroup(): boolean {
       if (this.group === 1 || !this.group) {
         return true
       } else {
         return false
       }
     },
-    disableNextRace (): boolean {
+    // 最終競技かどうか判定し、次の組ボタンを制御
+    disableNextRace(): boolean {
       if (this.lastRaceNo === 0 || this.raceNo >= this.lastRaceNo) {
         return true
       } else {
         return false
       }
     },
-    disablePrevRace (): boolean {
+    // 最初の競技かどうか判定し、次の組ボタンを制御
+    disablePrevRace(): boolean {
       if (this.firstRaceNo === 0 || this.raceNo <= this.firstRaceNo) {
         return true
       } else {
@@ -197,29 +253,42 @@ export default Vue.extend({
     }
   },
   watch: {
-    race (race: string): void {
+    // 競技に応じて変数や表示名や表示する記録を調整
+    race(race: string): void {
       if (race !== 'Not Selected') {
         const selectedRace = JSON.parse(race)
         console.log(selectedRace)
         this.raceNo = selectedRace.no
         this.groups = selectedRace.groups
         this.group = 1
+        // カテゴリーが決勝の場合、決勝フラグを立てる
         if (selectedRace.category === '決勝') {
           this.isFinal = true
         } else {
           this.isFinal = false
         }
+        // タイトル表示の形を作る（例：No.1 学童男子 50m自由形 予選）
         this.raceName =
           `No.${selectedRace.no} ${selectedRace.class}${selectedRace.type} ` +
           `${selectedRace.length}${selectedRace.race} ${selectedRace.category}`
-
+        // 性別・種目・距離に応じて記録（県記録・標準記録）を取得する
+        this.record1 = this.$store.getters.getRecord1(
+          selectedRace.type,
+          selectedRace.race,
+          selectedRace.length
+        )
+        this.record2 = this.$store.getters.getRecord2(
+          selectedRace.type,
+          selectedRace.race,
+          selectedRace.length
+        )
         this.readFile()
       } else {
         this.raceName = ''
         this.group = null
       }
     },
-    group (): void {
+    group(): void {
       this.readFile()
     }
   }
