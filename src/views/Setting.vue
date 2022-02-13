@@ -17,7 +17,7 @@
           @blur="applyChanges"
         ></v-text-field>
       </v-col>
-      <v-col cols="9">
+      <v-col cols="8">
         <v-file-input
           label="記録ファイル（.txt)"
           v-model="file1"
@@ -28,6 +28,13 @@
           @change="uploadRecordFile1"
           :messages="recordsample1"
         ></v-file-input>
+      </v-col>
+      <v-col cols="1">
+        <v-btn color="red" dark @click="deleteRecord(1)">
+          <v-icon dark>
+            mdi-delete
+          </v-icon>
+        </v-btn>
       </v-col>
     </v-row>
     <v-row class="text-center">
@@ -43,7 +50,7 @@
           @blur="applyChanges"
         ></v-text-field>
       </v-col>
-      <v-col cols="9">
+      <v-col cols="8">
         <v-file-input
           label="記録ファイル（.txt)"
           v-model="file2"
@@ -53,6 +60,13 @@
           @change="uploadRecordFile2"
           :messages="recordsample2"
         ></v-file-input>
+      </v-col>
+      <v-col cols="1">
+        <v-btn color="red" dark @click="deleteRecord(2)"
+          ><v-icon dark>
+            mdi-delete
+          </v-icon>
+        </v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -85,6 +99,22 @@ export default Vue.extend({
     }
   },
   methods: {
+    deleteRecord(number: number): void {
+      console.log(number)
+      this.$store.dispatch('deleteRecordInfo', {
+        num: number
+      })
+      switch (number) {
+        case 1:
+          this.recordsample1 = '登録されている記録がありません。'
+          break
+        case 2:
+          this.recordsample2 = '登録されている記録がありません。'
+          break
+        default:
+          break
+      }
+    },
     uploadRecordFile1(file: File): void {
       this.loadRecordFile(file, 1)
       this.$store.dispatch('updateRecordFile', {

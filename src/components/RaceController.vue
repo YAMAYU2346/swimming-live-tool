@@ -125,12 +125,15 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 次のレース
     nextRace(): void {
       this.$emit('next-race')
     },
+    // 前のレース
     prevRace(): void {
       this.$emit('prev-race')
     },
+    // 前の組
     prevGroup(): void {
       if (this.group) {
         this.group -= 1
@@ -138,6 +141,7 @@ export default Vue.extend({
         this.group = 1
       }
     },
+    // 次の組
     nextGroup(): void {
       if (this.group) {
         this.group += 1
@@ -145,7 +149,9 @@ export default Vue.extend({
         this.group = 1
       }
     },
+    // レースタイトル・記録の書き込み
     readFile(): void {
+      // レースタイトル更新
       const writeTitleToFileSync = (filepath: string, content: string) => {
         if (window && window.require) {
           const fs = window.require('fs')
@@ -161,10 +167,9 @@ export default Vue.extend({
           fs.writeFileSync(filePathNew, afterContent)
         }
       }
-      const writeRecordToFileSync = (
-        record1: string,
-        record2: string
-      ) => {
+      // 記録更新
+      // TODO 可変式
+      const writeRecordToFileSync = (record1: string, record2: string) => {
         if (window && window.require) {
           const fs = window.require('fs')
           const filePathNew = path.join(
@@ -186,19 +191,24 @@ export default Vue.extend({
         }
       }
       try {
+        // 決勝判定
         if (this.isFinal) {
+          // 決勝の場合、組数表示なし（タイム決勝は除く）
           writeTitleToFileSync(
             this.$store.getters.getCaptionPath,
             `${this.raceName}`
           )
         } else {
+          // 予選・タイム決勝の場合、組数を表示
           writeTitleToFileSync(
             this.$store.getters.getCaptionPath,
             `${this.raceName} ${this.group}組`
           )
         }
+        // レコードを更新
         writeRecordToFileSync(this.record1, this.record2)
       } catch (error) {
+        // HTMLファイルの指定が不要になったので、削除予定
         console.log(error)
         this.$emit(
           'alert',
@@ -208,6 +218,8 @@ export default Vue.extend({
     }
   },
   computed: {
+    // ボタン有効無効管理（次の組がない場合等）
+    // 最終組かどうか判定し、次の組ボタンを制御
     disableNextGroup(): boolean {
       if (this.group === this.groups || !this.group) {
         return true
@@ -215,6 +227,7 @@ export default Vue.extend({
         return false
       }
     },
+    // 1組目があるかどうか判定し、前の組ボタンを制御
     disablePrevGroup(): boolean {
       if (this.group === 1 || !this.group) {
         return true
@@ -222,6 +235,7 @@ export default Vue.extend({
         return false
       }
     },
+    // 最終競技かどうか判定し、次の組ボタンを制御
     disableNextRace(): boolean {
       if (this.lastRaceNo === 0 || this.raceNo >= this.lastRaceNo) {
         return true
@@ -229,6 +243,7 @@ export default Vue.extend({
         return false
       }
     },
+    // 最初の競技かどうか判定し、次の組ボタンを制御
     disablePrevRace(): boolean {
       if (this.firstRaceNo === 0 || this.raceNo <= this.firstRaceNo) {
         return true
@@ -238,6 +253,7 @@ export default Vue.extend({
     }
   },
   watch: {
+    // 競技に応じて変数や表示名や表示する記録を調整
     race(race: string): void {
       if (race !== 'Not Selected') {
         const selectedRace = JSON.parse(race)
@@ -245,14 +261,17 @@ export default Vue.extend({
         this.raceNo = selectedRace.no
         this.groups = selectedRace.groups
         this.group = 1
+        // カテゴリーが決勝の場合、決勝フラグを立てる
         if (selectedRace.category === '決勝') {
           this.isFinal = true
         } else {
           this.isFinal = false
         }
+        // タイトル表示の形を作る（例：No.1 学童男子 50m自由形 予選）
         this.raceName =
           `No.${selectedRace.no} ${selectedRace.class}${selectedRace.type} ` +
           `${selectedRace.length}${selectedRace.race} ${selectedRace.category}`
+        // 性別・種目・距離に応じて記録（県記録・標準記録）を取得する
         this.record1 = this.$store.getters.getRecord1(
           selectedRace.type,
           selectedRace.race,

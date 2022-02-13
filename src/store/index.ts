@@ -68,6 +68,8 @@ export default new Vuex.Store({
       }
       const json = JSON.parse(state.record2)
       const typeNum = type === '男子' ? '1' : '2'
+      // TODO: リレーの距離の変換（4×100m→400m）
+      const editedLength = length
       const record2 = json.find(
         (record: any) =>
           record.性別 === typeNum &&
@@ -132,7 +134,7 @@ export default new Vuex.Store({
         persistentStore.set('recordFileName2', recordFile.name)
       }
     },
-    deleteRecordInfo(state, { num }){
+    deleteRecordInfo(state, { num }) {
       if (num === 1) {
         state.record1 = ''
         state.recordAbbr1 = ''
