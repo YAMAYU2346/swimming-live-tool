@@ -18,7 +18,43 @@
           @alert="onAlert"
       /></v-col>
       <v-col cols="2" class="py-6">
-        <v-btn>setting</v-btn>
+        <v-dialog transition="dialog-bottom-transition" max-width="600">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              color="primary"
+              v-bind="attrs"
+              v-on="on"
+              @click="getEventList"
+              >setting</v-btn
+            >
+          </template>
+          <template v-slot:default="dialog">
+            <v-card>
+              <v-toolbar color="primary" dark>Setting</v-toolbar>
+              <v-card-text>
+                <div class="py-3">大会名</div>
+                <v-select
+                  v-model="eventId"
+                  :items="events"
+                  item-text="name"
+                  item-value="id"
+                  label="大会名を選択してください。"
+                  solo
+                ></v-select>
+                <div class="py-3">出場チーム数</div>
+                <v-select
+                  :items="[3, 4]"
+                  v-model="teamNumber"
+                  label="出場チーム数を選択してください。(3 or 4)"
+                  solo
+                ></v-select>
+              </v-card-text>
+              <v-card-actions class="justify-end">
+                <v-btn text @click="dialog.value = false">Close</v-btn>
+              </v-card-actions>
+            </v-card>
+          </template>
+        </v-dialog>
       </v-col>
     </v-row>
     <v-divider class="py-4"></v-divider>
@@ -226,6 +262,14 @@
 import Vue from 'vue'
 import draggable from 'vuedraggable'
 import RaceController from '../components/RaceController.vue'
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  where,
+  onSnapshot
+} from 'firebase/firestore'
 
 type DataType = {
   races: string
@@ -237,7 +281,6 @@ type DataType = {
   errorMessage: string
   teamNum: number
   jackpod: number | null
-
   ranking: any
   teamName1: string
   teamShortName1: string
@@ -248,6 +291,8 @@ type DataType = {
   teamName4: string
   teamShortName4: string
   items: any
+  events: any[]
+  teamNumber: number | null
 }
 
 export default Vue.extend({
@@ -302,10 +347,23 @@ export default Vue.extend({
       teamShortName3: 'C',
       teamName4: 'TEAM D',
       teamShortName4: 'D',
-      items: [1, 2, 3, 4, 5, 6, 7, 8]
+      items: [1, 2, 3, 4, 5, 6, 7, 8],
+      events: [],
+      teamNumber: null
     }
   },
   methods: {
+    async getEventList(): Promise<void> {
+      console.log('event')
+      const db = getFirestore()
+      const querySnapshot = await getDocs(collection(db, 'events'))
+      querySnapshot.forEach(doc => {
+        this.events.push({ name: `${doc.data().name}`, id: doc.id })
+        this.teamNumber = doc.data().teamNumber
+        console.log(`${doc.id} => ${doc.data()}`)
+      })
+      console.log(this.events)
+    },
     getExcel(timetable: string, firstRaceNo: number, lastRaceNo: number): void {
       this.firstRaceNo = firstRaceNo
       this.lastRaceNo = lastRaceNo

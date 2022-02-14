@@ -38,9 +38,9 @@
           </v-list-item-icon>
           <v-list-item-title>Time Table</v-list-item-title>
         </v-list-item>
-        <v-list-item link to="/isl">
+        <v-list-item link to="/isl-home">
           <v-list-item-icon>
-            <v-icon>mdi-calendar</v-icon>
+            <v-icon>mdi-trophy</v-icon>
           </v-list-item-icon>
           <v-list-item-title>ISL</v-list-item-title>
         </v-list-item>

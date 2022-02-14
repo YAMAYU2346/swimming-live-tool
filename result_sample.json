@@ -1,0 +1,15 @@
+{
+  "gameID": "",
+  "results": [
+    {
+      "No": 1,
+      "dist": "50m",
+      "event": "平泳ぎ",
+      "class": "男子",
+      "results": [
+        { "Team": "Team A", "name": "name name", "rank": 1, "pts": 9 },
+        { "Team": "Team B", "name": "name name2", "rank": 2, "pts": 8 }
+      ]
+    }
+  ]
+}

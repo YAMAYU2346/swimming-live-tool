@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '../views/Home.vue'
 import TimeTableAdmin from '../views/TimeTableAdmin.vue'
 import ISL from '../views/ISL.vue'
+import ISLHome from '../views/ISLHome.vue'
 import Setting from '../views/Setting.vue'
 
 Vue.use(VueRouter)
@@ -22,6 +23,11 @@ const routes: Array<RouteConfig> = [
     path: '/isl',
     name: 'ISL',
     component: ISL
+  },
+  {
+    path: '/isl-home',
+    name: 'ISL Home',
+    component: ISLHome
   },
   {
     path: '/setting',

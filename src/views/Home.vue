@@ -12,9 +12,9 @@
         </v-card>
       </v-col>
       <v-col cols="12">
-        <v-card to="/isl">
+        <v-card to="/isl-home">
           <v-card-title class="text-h5">
-            <v-icon>mdi-calendar</v-icon>ISL Mode
+            <v-icon>mdi-trophy</v-icon>ISL Mode
           </v-card-title>
           <v-card-subtitle> ISL </v-card-subtitle>
         </v-card>
