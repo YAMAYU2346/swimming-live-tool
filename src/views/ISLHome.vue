@@ -3,14 +3,14 @@
     <v-row dense>
       <v-col cols="12">
         <v-select
-          :items="events"
-          v-model="eventId"
+          :items="matchs"
+          v-model="matchId"
           item-text="name"
           item-value="id"
           label="大会名を選択してください"
           solo
         ></v-select>
-        <v-text-field v-model="eventEntryURL" outlined></v-text-field>
+        <v-text-field v-model="matchEntryURL" outlined></v-text-field>
       </v-col>
       <v-col cols="12">
         <v-card to="/isl">
@@ -26,22 +26,28 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import {
-  doc,
-  getFirestore,
-  collection,
-  getDocs,
-  query,
-  where,
-  onSnapshot,
-  updateDoc
-} from 'firebase/firestore'
+import func from '../plugins/functions'
+// import {
+//   doc,
+//   getFirestore,
+//   collection,
+//   getDocs,
+//   query,
+//   where,
+//   onSnapshot,
+//   updateDoc
+// } from 'firebase/firestore'
 
 type DataType = {
-  events: any[]
-  eventId: string | null
-  eventEntryURL: string | null
-  teamNumber: number | null
+  matchs: any[]
+  match: {
+    id: string | null
+    name: string | null
+    numOfTeams: number | null
+    entryURL: string | null
+  }
+  matchId: string | null,
+  matchEntryURL: string | null,
 }
 
 export default Vue.extend({
@@ -50,116 +56,114 @@ export default Vue.extend({
   components: {},
   data(): DataType {
     return {
-      events: [],
-      eventId: null,
-      eventEntryURL: null,
-      teamNumber: null
+      matchs: [],
+      match: {
+        id: null,
+        name: null,
+        numOfTeams: null,
+        entryURL: null
+      },
+      matchId: null,
+      matchEntryURL: null
     }
   },
   methods: {
-    async getEventList(): Promise<void> {
-      console.log('event')
-      const db = getFirestore()
-      const querySnapshot = await getDocs(collection(db, 'events'))
-      querySnapshot.forEach(doc => {
-        this.events.push({
-          name: `${doc.data().name}`,
-          id: doc.id,
-          teamNumber: doc.data().teamNumber,
-          eventEntryURL: doc.data().url
-        })
-        console.log(`${doc.id} => ${doc.data()}`)
+    async getMatchList(): Promise<void> {
+      console.log('match')
+      // TODO: Add API
+      this.matchs.push({
+        id: '1',
+        name: '盛南CUP 2022',
+        numOfTeams: 4,
+        entryURL: ''
       })
-      console.log(this.events)
+      if (this.$store.getters.getMatchInfo !== '') {
+        this.match = this.$store.getters.getMatchInfo
+        this.matchId = this.match.id
+        this.matchEntryURL = this.match.entryURL
+      }
+      console.log(this.matchs)
     },
-    async updateEventURL(): Promise<void> {
-      console.log('eventUpdate')
-      console.log(this.eventId)
-      const db = getFirestore()
-      const docRef = doc(db, `events/${this.eventId}`)
-      await updateDoc(docRef, {
-        url: this.eventEntryURL
-      })
-      console.log(this.events)
+    async updateMatchURL(url: string): Promise<void> {
+      console.log('Set URL')
+      if (this.match) {
+        this.match.entryURL = url
+      }
+      const a = await func.func()
+      console.log('aas')
+      console.log(a)
     },
     change(): void {
-      console.log(this.eventId)
+      if (this.match) {
+        console.log(this.match.id)
+      }
     }
   },
   computed: {
-    eventUrl(): string {
+    matchUrl(): string {
       return ''
     }
   },
   mounted() {
-    this.getEventList()
+    console.log('ISL Home')
+    this.getMatchList()
   },
   watch: {
-    eventId(eventId: string): void {
-      console.log(eventId)
-      const eventDetail = this.events.find(event => event.id === eventId)
-      console.log(eventDetail)
-      this.eventEntryURL = eventDetail.eventEntryURL
-      this.events = []
-      this.getEventList()
+    matchId(id: string): void {
+      console.log(id)
+      const matchDetail = this.matchs.find(match => match.id === id)
+      this.$store.commit('updateMatchInfo', JSON.stringify(matchDetail))
+      console.log(matchDetail)
+      this.matchs = []
+      this.getMatchList()
+    },
+    matchEntryURL(url: string): void {
+      console.log(this.updateMatchURL(url))
 
-      const testResult = [
-        [
-          'No',
-          '距離',
-          '種目',
-          'クラス',
-          'TeamA',
-          'TeamA',
-          'TeamB',
-          'TeamB',
-          'TeamC',
-          'TeamC',
-          'TeamD',
-          'TeamD'
-        ],
-        [
-          '1',
-          '50m',
-          '自由形',
-          '男子',
-          'A',
-          'B',
-          'C',
-          'D',
-          'E',
-          'F',
-          'G',
-          'H'
-        ]
-      ]
-      const firstData = testResult[0]
-      firstData.splice(0, 4)
-      console.log(firstData)
-      const gameReslts = []
-      for (let i = 1; i < testResult.length; i++) {
-        const eventResults = []
-        console.log(testResult[i])
-        for (let j = 4; j < testResult[i].length; j++) {
-          const eventReslt = {
-            team: firstData[j - 4],
-            name: testResult[i][j],
-            rank: null,
-            pts: null
-          }
-          console.log(eventReslt)
-          eventResults.push(eventReslt)
-        }
-        const result = {
-          No: testResult[i][0],
-          dist: testResult[i][1],
-          event: testResult[i][2],
-          class: testResult[i][3],
-          results: eventResults
-        }
-        gameReslts.push(result)
-      }
-      console.log(gameReslts)
+      // const testResult = [
+      //   [
+      //     'No',
+      //     '距離',
+      //     '種目',
+      //     'クラス',
+      //     'TeamA',
+      //     'TeamA',
+      //     'TeamB',
+      //     'TeamB',
+      //     'TeamC',
+      //     'TeamC',
+      //     'TeamD',
+      //     'TeamD'
+      //   ],
+      //   ['1', '50m', '自由形', '男子', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+      // ]
+      //   const firstData = testResult[0]
+      //   firstData.splice(0, 4)
+      //   console.log(firstData)
+      //   const gameReslts = []
+      //   for (let i = 1; i < testResult.length; i++) {
+      //     const matchResults = []
+      //     console.log(testResult[i])
+      //     for (let j = 4; j < testResult[i].length; j++) {
+      //       const matchReslt = {
+      //         team: firstData[j - 4],
+      //         name: testResult[i][j],
+      //         rank: null,
+      //         pts: null
+      //       }
+      //       console.log(matchReslt)
+      //       matchResults.push(matchReslt)
+      //     }
+      //     const result = {
+      //       No: testResult[i][0],
+      //       dist: testResult[i][1],
+      //       match: testResult[i][2],
+      //       class: testResult[i][3],
+      //       results: matchResults
+      //     }
+      //     gameReslts.push(result)
+      //   }
+      //   console.log(gameReslts)
     }
   }
 })

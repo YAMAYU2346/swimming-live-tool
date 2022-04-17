@@ -20,31 +20,28 @@
       <v-col cols="2" class="py-6">
         <v-dialog transition="dialog-bottom-transition" max-width="600">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              color="primary"
-              v-bind="attrs"
-              v-on="on"
-              @click="getEventList"
-              >setting</v-btn
-            >
+            <v-btn color="primary" v-bind="attrs" v-on="on">setting</v-btn>
           </template>
           <template v-slot:default="dialog">
             <v-card>
               <v-toolbar color="primary" dark>Setting</v-toolbar>
               <v-card-text>
                 <div class="py-3">大会名</div>
-                <v-select
-                  v-model="eventId"
-                  :items="events"
+                <p class="text-h4 text--primary">
+                  {{ matchInfo.name }}
+                </p>
+                <!-- <v-select
+                  v-model="matchId"
+                  :items="matchs"
                   item-text="name"
                   item-value="id"
                   label="大会名を選択してください。"
                   solo
-                ></v-select>
+                ></v-select> -->
                 <div class="py-3">出場チーム数</div>
                 <v-select
                   :items="[3, 4]"
-                  v-model="teamNumber"
+                  v-model="numOfTeams"
                   label="出場チーム数を選択してください。(3 or 4)"
                   solo
                 ></v-select>
@@ -61,7 +58,7 @@
     <v-row class="text-center">
       <v-col cols="9">
         <v-row class="text-center">
-          <v-col :cols="12 / teamNum">
+          <v-col :cols="12 / numOfTeams">
             <v-row class="text-center">
               <v-col cols="12" class="py-0">
                 <v-text-field v-model="teamName1" outlined dense hide-details>
@@ -79,13 +76,13 @@
               </v-col>
               <v-col cols="12">
                 <v-row align="center" justify="space-around">
-                  <v-btn>1</v-btn>
-                  <v-btn>2</v-btn>
+                  <v-btn>1: </v-btn>
+                  <v-btn>2: </v-btn>
                 </v-row>
               </v-col>
             </v-row>
           </v-col>
-          <v-col :cols="12 / teamNum">
+          <v-col :cols="12 / numOfTeams">
             <v-row class="text-center">
               <v-col cols="12" class="py-0">
                 <v-text-field v-model="teamName2" outlined dense hide-details>
@@ -109,7 +106,7 @@
               </v-col>
             </v-row>
           </v-col>
-          <v-col :cols="12 / teamNum">
+          <v-col :cols="12 / numOfTeams">
             <v-row class="text-center">
               <v-col cols="12" class="py-0">
                 <v-text-field v-model="teamName3" outlined dense hide-details>
@@ -133,7 +130,7 @@
               </v-col>
             </v-row>
           </v-col>
-          <v-col cols="3" v-if="teamNum == 4">
+          <v-col cols="3" v-if="numOfTeams == 4">
             <v-row class="text-center">
               <v-col cols="12" class="py-0">
                 <v-text-field v-model="teamName4" outlined dense hide-details>
@@ -209,7 +206,7 @@
                 <thead>
                   <tr>
                     <th
-                      v-for="n of teamNum * 2"
+                      v-for="n of numOfTeams * 2"
                       :key="n"
                       class="text-center"
                       v-bind:class="losePoint(n)"
@@ -235,15 +232,15 @@
       </v-col>
       <v-divider vertical></v-divider>
       <v-col cols="3">
-        <v-simple-table dense>
+        <v-data-table
+          :headers="headers"
+          :items="ranking"
+          item-key="name"
+          hide-default-footer
+          sort-by="rank"
+          dense
+        >
           <template v-slot:default>
-            <thead>
-              <tr>
-                <th class="text-left"></th>
-                <th class="text-left">TEAM</th>
-                <th class="text-left">POINT</th>
-              </tr>
-            </thead>
             <tbody>
               <tr v-for="item in ranking" :key="item.name">
                 <td>{{ item.rank }}</td>
@@ -252,7 +249,7 @@
               </tr>
             </tbody>
           </template>
-        </v-simple-table>
+        </v-data-table>
       </v-col>
     </v-row>
   </v-container>
@@ -262,14 +259,14 @@
 import Vue from 'vue'
 import draggable from 'vuedraggable'
 import RaceController from '../components/RaceController.vue'
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  query,
-  where,
-  onSnapshot
-} from 'firebase/firestore'
+// import {
+//   getFirestore,
+//   collection,
+//   getDocs,
+//   query,
+//   where,
+//   onSnapshot
+// } from 'firebase/firestore'
 
 type DataType = {
   races: string
@@ -279,7 +276,7 @@ type DataType = {
   isNextRace: boolean
   alert: boolean
   errorMessage: string
-  teamNum: number
+  numOfTeams: number
   jackpod: number | null
   ranking: any
   teamName1: string
@@ -291,8 +288,7 @@ type DataType = {
   teamName4: string
   teamShortName4: string
   items: any
-  events: any[]
-  teamNumber: number | null
+  matchInfo: any | null
 }
 
 export default Vue.extend({
@@ -311,26 +307,26 @@ export default Vue.extend({
       isNextRace: true,
       alert: false,
       errorMessage: 'message',
-      teamNum: 4,
+      numOfTeams: 4,
       jackpod: null,
       ranking: [
         {
           name: 'Team A',
           shortName: 'A',
           point: 159,
-          rank: 1
+          rank: 2
         },
         {
           name: 'Team B',
           shortName: 'B',
           point: 237,
-          rank: 2
+          rank: 1
         },
         {
           name: 'Team C',
           shortName: 'C',
           point: 159,
-          rank: 3
+          rank: 1
         },
         {
           name: 'Team D',
@@ -348,22 +344,21 @@ export default Vue.extend({
       teamName4: 'TEAM D',
       teamShortName4: 'D',
       items: [1, 2, 3, 4, 5, 6, 7, 8],
-      events: [],
-      teamNumber: null
+      matchInfo: null
     }
   },
   methods: {
-    async getEventList(): Promise<void> {
-      console.log('event')
-      const db = getFirestore()
-      const querySnapshot = await getDocs(collection(db, 'events'))
-      querySnapshot.forEach(doc => {
-        this.events.push({ name: `${doc.data().name}`, id: doc.id })
-        this.teamNumber = doc.data().teamNumber
-        console.log(`${doc.id} => ${doc.data()}`)
-      })
-      console.log(this.events)
-    },
+    // async getMatchList(): Promise<void> {
+    //   console.log('match')
+    //   // const db = getFirestore()
+    //   // const querySnapshot = await getDocs(collection(db, 'matchs'))
+    //   // querySnapshot.forEach(doc => {
+    //   //   this.matchs.push({ name: `${doc.data().name}`, id: doc.id })
+    //   //   this.numOfTeams = doc.data().numOfTeams
+    //   //   console.log(`${doc.id} => ${doc.data()}`)
+    //   // })
+    //   console.log(this.matchIInfo)
+    // },
     getExcel(timetable: string, firstRaceNo: number, lastRaceNo: number): void {
       this.firstRaceNo = firstRaceNo
       this.lastRaceNo = lastRaceNo
@@ -394,10 +389,10 @@ export default Vue.extend({
     pointList(jackpod: number | null): number[] {
       const points = [9, 7, 6, 5, 4, 3, 2, 1]
       const list = []
-      for (let index = 0; index < this.teamNum * 2; index++) {
+      for (let index = 0; index < this.numOfTeams * 2; index++) {
         if (index === 0 && jackpod) {
           let point = points[0]
-          for (let index = jackpod - 1; index < this.teamNum * 2; index++) {
+          for (let index = jackpod - 1; index < this.numOfTeams * 2; index++) {
             point = point + points[index]
           }
           list.push(point)
@@ -419,15 +414,33 @@ export default Vue.extend({
   computed: {
     pulldownList(): number[] {
       const list = []
-      for (let index = 2; index <= this.teamNum * 2; index++) {
+      for (let index = 2; index <= this.numOfTeams * 2; index++) {
         list.push(index)
       }
       return list
+    },
+    headers() {
+      return [
+        {
+          text: 'RANK',
+          align: 'start',
+          sortable: false,
+          value: 'rank'
+        },
+        {
+          text: 'TEAM',
+          value: 'name',
+          sortable: false
+        },
+        { text: 'POINT(PTS)', value: 'point', sortable: false }
+      ]
     }
   },
   mounted() {
     console.log('view')
     const info = this.$store.getters.getTimeTableInfo
+    this.matchInfo = this.$store.getters.getMatchInfo
+    this.numOfTeams = this.matchInfo.numOfTeams
     this.races = info.timetable
     console.log(info)
     this.firstRaceNo = info.firstRaceNo

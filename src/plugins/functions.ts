@@ -1,57 +1,27 @@
-// const testResult = [
-//   [
-//     'No',
-//     '距離',
-//     '種目',
-//     'クラス',
-//     'TeamA',
-//     'TeamA',
-//     'TeamB',
-//     'TeamB',
-//     'TeamC',
-//     'TeamC',
-//     'TeamD',
-//     'TeamD'
-//   ],
-//   [
-//     '1',
-//     '50m',
-//     '自由形',
-//     '男子',
-//     '吉田修一郎',
-//     '吉田修一郎',
-//     '山田裕也',
-//     '山田裕也',
-//     '一戸元喜',
-//     '一戸元喜',
-//     '熊谷栞太',
-//     '熊谷栞太'
-//   ]
-// ]
+import axios from 'axios'
 
-// const resultFormat = { Team: '', name: '', rank: null, pts: null }
+const func = async (): Promise<string[]> => {
+  return await axios
+    .get(
+      ''
+    )
+    .then(function(res) {
+      console.log(res.data)
+      const values = res.data.values
+      const resultList: string[] = []
+      for (let index = 1; index < values.length; index++) {
+        const raceResut = {
+          no: values[index][0],
+          dist: values[index][1],
+          style: values[index][2],
+          class: values[index][3]
+        }
+        resultList.push(JSON.stringify(raceResut))
+      }
+      return resultList
+    })
+}
 
-// const createResults = (gameId: string, sheetData: any): any => {
-//   let results = testResult
-//   const teamList = [...new Set(results[0].splice(0, 4))]
-//   const resultsFormat = {
-//     No: metaData[0],
-//     dist: metaData[1],
-//     event: metaData[2],
-//     class: metaData[3],
-//     results: []
-//   }
-
-//   return 'aaa'
-// }
-
-// const func2 = (
-//   skinResult: Record<string, unknown>
-// ): Record<string, unknown>[] => {
-//   return 'aaa'
-// }
-
-// export default {
-//   func,
-//   func2
-// }
+export default {
+  func
+}

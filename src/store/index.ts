@@ -8,6 +8,7 @@ const persistentStore = new Store()
 
 export default new Vuex.Store({
   state: {
+    // Live配信用
     timeTableFile: persistentStore.get('timeTableFile') || '',
     timetable: '',
     firstRaceNo: 0,
@@ -19,7 +20,9 @@ export default new Vuex.Store({
     recordFile1: null,
     recordFile2: null,
     recordFileName1: persistentStore.get('recordFileName1') || '',
-    recordFileName2: persistentStore.get('recordFileName2') || ''
+    recordFileName2: persistentStore.get('recordFileName2') || '',
+    // ISL用
+    matchInfo: ''
   },
   getters: {
     getTimeTableFile(state) {
@@ -92,6 +95,13 @@ export default new Vuex.Store({
         recordFileName1: state.recordFileName1,
         recordFileName2: state.recordFileName2
       }
+    },
+    getMatchInfo(state) {
+      console.log(state.matchInfo)
+      if (!state.matchInfo) {
+        return state.matchInfo
+      }
+      return JSON.parse(state.matchInfo)
     }
   },
   mutations: {
@@ -152,6 +162,12 @@ export default new Vuex.Store({
         persistentStore.delete('recordAbbr2')
         persistentStore.delete('recordFileName2')
       }
+    },
+    updateMatchInfo(state, info: string) {
+      state.matchInfo = info
+    },
+    deleteMatchInfo(state) {
+      state.matchInfo = ''
     }
   },
   actions: {
@@ -192,6 +208,12 @@ export default new Vuex.Store({
       context.commit('deleteRecordInfo', {
         num
       })
+    },
+    updateMatchInfo(context, matchInfo) {
+      context.commit('updateMatchInfo', matchInfo)
+    },
+    deleteMatchInfo(context) {
+      context.commit('deleteMatchInfo')
     }
   },
   modules: {}
