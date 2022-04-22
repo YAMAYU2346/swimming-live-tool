@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-row class="justify-end">
       <v-col v-show="alert" cols="12" class="py-0">
         <v-alert :value="alert" dense outlined type="error" hide-detail>
@@ -259,6 +259,7 @@
 import Vue from 'vue'
 import draggable from 'vuedraggable'
 import RaceController from '../components/RaceController.vue'
+import func from '../plugins/functions'
 // import {
 //   getFirestore,
 //   collection,
@@ -279,6 +280,7 @@ type DataType = {
   numOfTeams: number
   jackpod: number | null
   ranking: any
+  // teamList: []
   teamName1: string
   teamShortName1: string
   teamName2: string
@@ -289,6 +291,7 @@ type DataType = {
   teamShortName4: string
   items: any
   matchInfo: any | null
+  matchURL: string
 }
 
 export default Vue.extend({
@@ -335,6 +338,7 @@ export default Vue.extend({
           rank: 4
         }
       ],
+      // teamList: [],
       teamName1: 'TEAM A',
       teamShortName1: 'A',
       teamName2: 'TEAM B',
@@ -344,7 +348,8 @@ export default Vue.extend({
       teamName4: 'TEAM D',
       teamShortName4: 'D',
       items: [1, 2, 3, 4, 5, 6, 7, 8],
-      matchInfo: null
+      matchInfo: null,
+      matchURL: ''
     }
   },
   methods: {
@@ -409,6 +414,40 @@ export default Vue.extend({
         return 'lose-point'
       }
       return ''
+    },
+    async getEntryList(): Promise<void> {
+      console.log('entry list')
+      const race = await func.getEntryList(this.matchURL)
+      const teamList = await func.getTeamName(this.matchURL)
+      console.log(teamList)
+      this.setTeamName(teamList)
+    },
+    setTeamName(teamListStr: string): void {
+      const teamList = JSON.parse(teamListStr)
+      for (let index = 0; index < teamList.length; index++) {
+        const element = teamList[index]
+        console.log(element)
+        switch (index) {
+          case 0:
+            this.teamName1 = element.name
+            this.teamShortName1 = element.nameAbbr
+            break
+          case 1:
+            this.teamName2 = element.name
+            this.teamShortName2 = element.nameAbbr
+            break
+          case 2:
+            this.teamName3 = element.name
+            this.teamShortName3 = element.nameAbbr
+            break
+          case 3:
+            this.teamName4 = element.name
+            this.teamShortName3 = element.nameAbbr
+            break
+          default:
+            break
+        }
+      }
     }
   },
   computed: {
@@ -445,6 +484,9 @@ export default Vue.extend({
     console.log(info)
     this.firstRaceNo = info.firstRaceNo
     this.lastRaceNo = info.lastRaceNo
+    console.log(this.$store.getters.getMatchURL)
+    this.matchURL = this.$store.getters.getMatchURL
+    this.getEntryList()
   }
 })
 </script>

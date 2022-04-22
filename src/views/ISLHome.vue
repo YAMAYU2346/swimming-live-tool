@@ -46,8 +46,8 @@ type DataType = {
     numOfTeams: number | null
     entryURL: string | null
   }
-  matchId: string | null,
-  matchEntryURL: string | null,
+  matchId: string | null
+  matchEntryURL: string | null
 }
 
 export default Vue.extend({
@@ -89,9 +89,10 @@ export default Vue.extend({
       if (this.match) {
         this.match.entryURL = url
       }
-      const a = await func.func()
-      console.log('aas')
-      console.log(a)
+      console.log(url)
+      this.$store.dispatch('updateMatchURL', url)
+      const a = await func.getEntryList(url)
+      console.log(this.$store.getters.getMatchURL)
     },
     change(): void {
       if (this.match) {
@@ -100,7 +101,7 @@ export default Vue.extend({
     }
   },
   computed: {
-    matchUrl(): string {
+    matchURL(): string {
       return ''
     }
   },
@@ -112,7 +113,7 @@ export default Vue.extend({
     matchId(id: string): void {
       console.log(id)
       const matchDetail = this.matchs.find(match => match.id === id)
-      this.$store.commit('updateMatchInfo', JSON.stringify(matchDetail))
+      this.$store.dispatch('updateMatchInfo', JSON.stringify(matchDetail))
       console.log(matchDetail)
       this.matchs = []
       this.getMatchList()

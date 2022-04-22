@@ -22,7 +22,8 @@ export default new Vuex.Store({
     recordFileName1: persistentStore.get('recordFileName1') || '',
     recordFileName2: persistentStore.get('recordFileName2') || '',
     // ISL用
-    matchInfo: ''
+    matchInfo: '',
+    matchURL: ''
   },
   getters: {
     getTimeTableFile(state) {
@@ -96,6 +97,9 @@ export default new Vuex.Store({
         recordFileName2: state.recordFileName2
       }
     },
+    getMatchURL(state) {
+      return state.matchURL
+    },
     getMatchInfo(state) {
       console.log(state.matchInfo)
       if (!state.matchInfo) {
@@ -168,6 +172,12 @@ export default new Vuex.Store({
     },
     deleteMatchInfo(state) {
       state.matchInfo = ''
+    },
+    updateMatchURL(state, url: string) {
+      state.matchURL = url
+    },
+    deleteMatchURL(state) {
+      state.matchURL = ''
     }
   },
   actions: {
@@ -214,6 +224,12 @@ export default new Vuex.Store({
     },
     deleteMatchInfo(context) {
       context.commit('deleteMatchInfo')
+    },
+    updateMatchURL(context, matchURL) {
+      context.commit('updateMatchURL', matchURL)
+    },
+    deleteMatchURL(context) {
+      context.commit('deleteMatchURL')
     }
   },
   modules: {}

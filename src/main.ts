@@ -9,12 +9,15 @@ import path from 'path'
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
 import fbConfig from './config/firebase-config'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
 
 const exApp = express()
 exApp.use(express.static(path.dirname(__dirname)))
 exApp.use(serveIndex(path.dirname(__dirname), { icons: true }))
 exApp.listen(process.env.PORT || 3000)
 
+Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
 
 const firebaseConfig = {
