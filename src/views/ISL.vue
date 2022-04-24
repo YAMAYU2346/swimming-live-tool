@@ -58,7 +58,7 @@
     <v-row class="text-center">
       <v-col cols="9">
         <v-row class="text-center">
-          <v-col :cols="12 / numOfTeams">
+          <!-- <v-col :cols="12 / numOfTeams">
             <v-row class="text-center">
               <v-col cols="12" class="py-0">
                 <v-text-field v-model="teamName1" outlined dense hide-details>
@@ -153,6 +153,24 @@
                 </v-row>
               </v-col>
             </v-row>
+          </v-col> -->
+          <v-col cols="12">
+            <v-data-table
+              :headers="startListHeaders"
+              :items="startList"
+              class="elevation-1"
+              hide-default-footer
+            >
+              <template v-slot:[`item.team`]="{ item }">
+                {{ item.team }} ({{ item.teamShortName }})
+              </template>
+              <template v-slot:[`item.ctrl`]="{ item }">
+                <v-btn @click="getPoint(item.rane)">Touch</v-btn>
+              </template>
+              <template v-slot:[`item.cansel`]="{ item }">
+                <v-btn @click="getPoint(item.rane)">CANCEL</v-btn>
+              </template>
+            </v-data-table>
           </v-col>
           <v-col cols="12">
             <v-row>
@@ -260,14 +278,7 @@ import Vue from 'vue'
 import draggable from 'vuedraggable'
 import RaceController from '../components/RaceController.vue'
 import func from '../plugins/functions'
-// import {
-//   getFirestore,
-//   collection,
-//   getDocs,
-//   query,
-//   where,
-//   onSnapshot
-// } from 'firebase/firestore'
+import calc from '../plugins/calc-points'
 
 type DataType = {
   races: string
@@ -280,6 +291,7 @@ type DataType = {
   numOfTeams: number
   jackpod: number | null
   ranking: any
+  startList: any
   // teamList: []
   teamName1: string
   teamShortName1: string
@@ -336,6 +348,24 @@ export default Vue.extend({
           shortName: 'D',
           point: 237,
           rank: 4
+        }
+      ],
+      startList: [
+        {
+          rane: 1,
+          team: 'Team A',
+          teamShortName: 'TA',
+          name: '山田太郎',
+          point: 0,
+          rank: 0
+        },
+        {
+          rane: 1,
+          team: 'Team A',
+          teamShortName: 'TA',
+          name: '山田太郎',
+          point: 0,
+          rank: 0
         }
       ],
       // teamList: [],
@@ -422,6 +452,10 @@ export default Vue.extend({
       console.log(teamList)
       this.setTeamName(teamList)
     },
+    getPoint(rank: number): void {
+      console.log(rank)
+      calc.getPoint(2, 2, 2, 4)
+    },
     setTeamName(teamListStr: string): void {
       const teamList = JSON.parse(teamListStr)
       for (let index = 0; index < teamList.length; index++) {
@@ -457,6 +491,31 @@ export default Vue.extend({
         list.push(index)
       }
       return list
+    },
+    startListHeaders() {
+      return [
+        {
+          text: 'RANE',
+          align: 'start',
+          sortable: false,
+          value: 'rane'
+        },
+        {
+          text: 'NAME',
+          align: 'start',
+          sortable: false,
+          value: 'name'
+        },
+        {
+          text: 'TEAM',
+          value: 'team',
+          sortable: false
+        },
+        { text: 'RANK', value: 'rank', sortable: false },
+        { text: 'POINT(PTS)', value: 'point', sortable: false },
+        { text: 'CONTROL', align: 'center', value: 'ctrl', sortable: false },
+        { text: 'CANCEL', align: 'center', value: 'cansel', sortable: false }
+      ]
     },
     headers() {
       return [

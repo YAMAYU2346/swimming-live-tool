@@ -10,7 +10,19 @@
           label="大会名を選択してください"
           solo
         ></v-select>
-        <v-text-field v-model="matchEntryURL" outlined></v-text-field>
+      </v-col>
+      <v-col cols="11">
+        <v-text-field
+          label="URL"
+          v-model="matchEntryURL"
+          outlined
+          dense
+        ></v-text-field>
+      </v-col>
+      <v-col cols="1">
+        <v-btn color="primary" @click="updateMatchURL" :disabled="canUpdate"
+          >更新</v-btn
+        >
       </v-col>
       <v-col cols="12">
         <v-card to="/isl">
@@ -84,15 +96,14 @@ export default Vue.extend({
       }
       console.log(this.matchs)
     },
-    async updateMatchURL(url: string): Promise<void> {
-      console.log('Set URL')
-      if (this.match) {
-        this.match.entryURL = url
+    async updateMatchURL(): Promise<void> {
+      if (this.matchEntryURL) {
+        const url = this.matchEntryURL
+        console.log(url)
+        this.$store.dispatch('updateMatchURL', url)
+        const entryList = await func.getEntryList(url)
+        console.log(entryList)
       }
-      console.log(url)
-      this.$store.dispatch('updateMatchURL', url)
-      const a = await func.getEntryList(url)
-      console.log(this.$store.getters.getMatchURL)
     },
     change(): void {
       if (this.match) {
@@ -103,11 +114,15 @@ export default Vue.extend({
   computed: {
     matchURL(): string {
       return ''
+    },
+    canUpdate(): boolean {
+      console.log(typeof this.matchEntryURL)
+      return typeof this.matchEntryURL !== 'string'
     }
   },
   mounted() {
     console.log('ISL Home')
-    this.getMatchList()
+    this.matchEntryURL = this.$store.getters.getMatchURL
   },
   watch: {
     matchId(id: string): void {
@@ -119,7 +134,7 @@ export default Vue.extend({
       this.getMatchList()
     },
     matchEntryURL(url: string): void {
-      console.log(this.updateMatchURL(url))
+      this.matchEntryURL = url
 
       // const testResult = [
       //   [
