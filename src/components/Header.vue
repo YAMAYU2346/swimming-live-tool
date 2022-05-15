@@ -1,24 +1,16 @@
 <template>
   <v-container>
-    <v-app-bar app color="primary" dark clipped-left>
+    <v-app-bar app color="#00022b" dark clipped-left>
       <div class="d-flex align-center">
         <v-img
-          alt="Vuetify Logo"
+          alt="Admin Logo"
           class="shrink mr-2"
           contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+          src="../assets/mmst_logo_small.png"
           transition="scale-transition"
           width="40"
         />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
+        <v-app-bar-title>SWIMMING LIVE ADMIN</v-app-bar-title>
       </div>
 
       <v-spacer></v-spacer>
